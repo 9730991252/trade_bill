@@ -29,7 +29,7 @@
         <form method="POST"> {% csrf_token %}
             <br>
             <div class="mb-3">
-            <input type="password" oninput="check_number()" name="number" placeholder="Enter Your Mobile Number" class="form-control" id="number" required>
+            <input type="number" oninput="check_number()" name="number" placeholder="Enter Your Mobile Number" class="form-control" id="number" required>
             </div>
             <div class="mb-3">
             <input oninput="check_pin()" name="pin" placeholder="Enter Your Secret pin" type="password" class="form-control" id="pin" required>
