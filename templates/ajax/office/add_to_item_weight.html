@@ -1,0 +1,105 @@
+{% load office_tag %}
+{% total_item_amount employee_id as total_item_amount %}
+{% for c in cart %}
+<br>
+<div class="cart_item_main_box">
+    <div class="remove_cart_item_box" data-bs-toggle="modal" data-bs-target="#exampleModal1{{c.id}}" >X</div>
+    <div class="cart_item_name_box">
+        <b>{{c.stock_item.item_name_marathi}}</b>
+        <p>शिल्लक  वजन  {{c.stock_item.stock_weight}}, नग  {{c.stock_item.stock_qty}}</p>
+    </div>
+<div class="card_item_box">
+    <div class="main_head">वजनाचा तपशील </div>
+    <div class="main_head">नग</div>
+    <div class="main_head">वजन</div>
+    <div class="main_head">दर</div>
+    <div class="main_head">रक्कम</div>
+    <div>{% item_weight_detail c.id %}</div>
+    <div class=""><input type="number" value="{% if c.qty == 0 %}{% else %}{{c.qty}}{% endif %}" id="cart_qty{{c.id}}" oninput="cart_qty('{{c.id}}')" style="width: 40px;" required></div>
+    <div class="">{% item_weight_detail_sum c.id as n %} <input type="text" value="{% if n == 0 %}{% else %}{{n}}{% endif %}" style="width: 40px;" required readonly="readonly"></div>
+    <div class=""  ><input value="{% if c.prise == 0 %}{% else %}{{c.prise | floatformat:0}}{% endif %}" type="number" id="prise{{c.id}}"  style="width: 40px;" required></div>
+    <div class="" id="set_amount_div{{c.id}}">{% calculete_item_prise n c.prise  %}</div>
+</div> 
+    <div class="card_item_box" style="border: none;">
+        <div  style="text-align: start; display: flex; gap: 10px;" >
+            <div><input style="width: 100px;" id="weight{{c.id}}" oninput="check_weight_greter('{{c.stock_item.stock_weight}}','{{c.id}}')" placeholder="वजन टाका" type="number"></div>
+            <div ><h6 style="font-size: 20px;" onclick="add_to_item_weight('{{c.id}}','{{c.stock_item.id}}')">+</h6></div>
+        </div>
+        <div></div>
+        <div></div>
+        <p class="mb-0"><i onclick="calculete_prise('{{n}}','{{c.id}}'),total_amount_calculate('{{total_item_amount}}')" class="fa-solid fa-check"></i></p>
+        <div></div>
+    </div>
+</div>
+
+<!-----------------------modal----------------------------------->
+<div class="modal fade" id="exampleModal1{{c.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">खात्री करणे बाबत ... </h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <b class="text-danger"> {{c.stock_item.item_name_marathi}} </b> कार्ट मधून  काढायचे आहे का ? <br><br>
+                <button class="btn btn-danger" data-bs-dismiss="modal" onclick="remove_cart_item('{{c.id}}')" name="remove_item_weight" >काढून टाका</button>
+        </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+    </div>
+</div>
+</div>
+<!-----------------------endmodal----------------------------------->
+
+{% endfor %}
+{% if cart %}
+<div id="complete_bill_box">
+<hr>
+<div class="other_charges_box" >
+    <div class="other_charges">
+        <div class="lable">हमाली</div>
+        <div class="containt"> <input type="number" name="hamali" id="हमाली" oninput="total_amount_calculate('{{total_item_amount}}')"  required> </div>
+    </div>
+    <div class="other_charges">
+        <div class="lable">तोलाई</div>
+        <div class="containt"> <input type="number" name="tolai" id="तोलाई" oninput="total_amount_calculate('{{total_item_amount}}')" required> </div>
+    </div>
+    <div class="other_charges">
+<div class="lable">आडत</div>
+<div class="containt"> <input type="number" name="aadat" id="आडत" oninput="total_amount_calculate('{{total_item_amount}}')"  required> </div>
+</div>
+<div class="other_charges">
+<div class="lable">शेअर्स</div>
+<div class="containt"> <input type="number" name="shears" id="शेअर्स" oninput="total_amount_calculate('{{total_item_amount}}')" required> </div>
+</div>
+<div class="other_charges">
+<div class="lable">इतर</div>
+<div class="containt"> <input type="number" name="eater" id="इतर" oninput="total_amount_calculate('{{total_item_amount}}')" required> </div>
+</div>
+<div class="other_charges">
+<div class="lable">एकूण</div>
+<input type="hidden" name="total" id="total_item_amount_input" value="">
+<div class="containt" id="total_item_amount_box">{{total_item_amount}} </div>
+</div>
+</div>
+
+<button type="submit" class="btn btn-danger mb-2" name="complete_bill">बिल पूर्ण करा</button>
+</div>
+{% endif %}
+
+
+<script>
+    function total_amount_calculate(old_amount){
+    new_amount = Number(old_amount) +
+             (
+                Number(document.getElementById('हमाली').value) + 
+                Number(document.getElementById('तोलाई').value) + 
+                Number(document.getElementById('आडत').value) +
+                Number(document.getElementById('शेअर्स').value) +
+                Number(document.getElementById('इतर').value)
+            )
+    document.getElementById('total_item_amount_box').innerHTML = new_amount
+    document.getElementById('total_item_amount_input').value = new_amount
+}
+</script>

@@ -1,0 +1,51 @@
+{% extends 'home/base.html' %}
+{% block head %}
+{% endblock head %}
+{% block content %}
+{% include 'include/alert.html' %}
+<div>
+    welcome - {{employee.name}}
+</div>
+{% include 'include/office/office_menu.html' %}
+
+<style>
+    .main{
+        display: grid;
+        grid-template-columns: repeat(auto-fit, 350px);
+        gap: 10px;
+    }
+    .card_box{
+        width: 350px;
+        height: fit-content;
+        text-align: center;
+        border: 1px solid black;
+        border-radius: 10px;
+        padding: 10px;
+    }
+    .flex{
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+    }
+</style>
+<div class="container">
+    <div class="main">
+        {% for o in order_master %}
+            <div class="card_box">
+                <div class="flex" style="justify-content: space-between;">
+                    <div class="bill_number">Bill Number - <b>{{o.order_filter}}</b></div>
+                    <div class="date">{{o.ordered_date}}</div>
+                </div>
+                <div class="office_employee">By - {{o.office_employee.name}}</div>
+                {% if o.customer == None %}{% else %}
+                <div class="customer_box flex" style="justify-content: space-between;">
+                    <div class="customer_name">नांव - {{o.customer.name}}</div>
+                    <div class="customer_mobile">मोबाइल - {{o.customer.mobile}}</div>
+                </div>
+                {% endif %}
+                <a href="/office/completed_view_bill/{{o.order_filter}}" class="btn btn-success">View</a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,76 @@
+{% extends 'home/base.html' %}
+{% block head %}
+{% endblock head %}
+{% block content %}
+{% load office_tag %}
+{% include 'include/alert.html' %}
+<div>
+    welcome - {{employee.name}}
+</div>
+{% include 'include/office/office_menu.html' %}
+
+
+<style>
+    .stock_box{
+        width: 400px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        border: 1px solid black;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        position: relative;
+    }
+    .flex{
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+    }
+    .product_name{
+        background-color: rgb(193, 255, 255);
+        padding: 10px;
+        font-weight: 700;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+    }
+    .category_name{
+        position: absolute;
+        right: 10px;
+        top: 0;
+    }
+  </style>
+  <div class="text-center">
+    {% for s in stock %}
+        <div class="stock_box">
+            <div class="category_name">{{s.item_category.name}}</div>
+            <div class="product_name">{{s.item_name_marathi}}</div>
+            <div class="p-2">
+                <div class="flex" style="justify-content: space-between;">
+                    <div><b>Total</b> - &nbsp;&nbsp;&nbsp; Weight  <b>{{s.weight}}</b></div>
+                    <div>Qty  <b>{{s.qty}}</b></div>
+                </div>
+                <div class="flex" style="justify-content: space-between;">
+                    <div><b>Sell</b> - &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Weight  <b>{% sell_weight s.weight s.stock_weight %}</b></div>
+                    <div>Qty  <b>{% sell_qty s.qty s.stock_qty %}</b></div>
+                </div>
+                <div class="flex" style="justify-content: space-between;">
+                    <div><b>Stock</b> - &nbsp;&nbsp; Weight  <b>{{s.stock_weight}}</b></div>
+                    <div>Qty  <b>{{s.stock_qty}}</b></div>
+                </div>
+                <div class="flex" style="margin-top: 10px; justify-content: space-evenly;">
+                    <div>{{s.party_name}}</div>
+                    <div>{{s.vehicle_number}}</div>
+                </div>
+                <div class="flex" style="justify-content: space-between;">
+                    <div>Added By - {{s.office_employee.name}}</div>
+                    <div>{{s.date}}</div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+  </div>
+</div>
+
+
+{% endblock content %}
