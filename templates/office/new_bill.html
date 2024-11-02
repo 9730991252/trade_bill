@@ -62,14 +62,11 @@
         color: red;
     }
     .other_charges_box{
-        padding: 5px;
+        gap: 5px;
         display: flex;
-        gap: 2px;
     }
     .other_charges{
-        padding: 5px;
         display: flex;
-        gap: 10px;
         flex-direction: column;
         input{
             width: 50px;
@@ -123,7 +120,7 @@
                     </div>
                     <div><p class="mb-0"><i onclick="cart_qty('{{c.id}}')" class="fa-solid fa-check"></i></p></div>
                     <div></div>
-                    <p class="mb-0"><i onclick="calculete_prise('{{n}}','{{c.id}}'),total_amount_calculate('{{total_item_amount}}')" class="fa-solid fa-check"></i></p>
+                    <div><p class="mb-0"><i onclick="calculete_prise('{{n}}','{{c.id}}'),total_amount_calculate('{{total_item_amount}}')" class="fa-solid fa-check"></i></p></div>
                     <div></div>
                 </div>
             </div>
