@@ -15,17 +15,17 @@
     <div class="main_head">दर</div>
     <div class="main_head">रक्कम</div>
     <div>{% item_weight_detail c.id %}</div>
-    <div class=""><input type="number" value="{% if c.qty == 0 %}{% else %}{{c.qty}}{% endif %}" id="cart_qty{{c.id}}" oninput="cart_qty('{{c.id}}')" style="width: 40px;" required></div>
+    <div class=""><input type="number" value="{% if c.qty == 0 %}{% else %}{{c.qty}}{% endif %}" id="cart_qty{{c.id}}" style="width: 40px;" required></div>
     <div class="">{% item_weight_detail_sum c.id as n %} <input type="text" value="{% if n == 0 %}{% else %}{{n}}{% endif %}" style="width: 40px;" required readonly="readonly"></div>
     <div class=""  ><input value="{% if c.prise == 0 %}{% else %}{{c.prise | floatformat:0}}{% endif %}" type="number" id="prise{{c.id}}"  style="width: 40px;" required></div>
-    <div class="" id="set_amount_div{{c.id}}">{% calculete_item_prise n c.prise  %}</div>
+    <div class="" id="set_amount_div{{c.id}}">{% calculete_item_prise n c.prise %}</div>
 </div> 
     <div class="card_item_box" style="border: none;">
         <div  style="text-align: start; display: flex; gap: 10px;" >
             <div><input style="width: 100px;" id="weight{{c.id}}" oninput="check_weight_greter('{{c.stock_item.stock_weight}}','{{c.id}}')" placeholder="वजन टाका" type="number"></div>
             <div ><h6 style="font-size: 20px;" onclick="add_to_item_weight('{{c.id}}','{{c.stock_item.id}}')">+</h6></div>
         </div>
-        <div></div>
+        <div><p class="mb-0"><i onclick="cart_qty('{{c.id}}')" class="fa-solid fa-check"></i></p></div>
         <div></div>
         <p class="mb-0"><i onclick="calculete_prise('{{n}}','{{c.id}}'),total_amount_calculate('{{total_item_amount}}')" class="fa-solid fa-check"></i></p>
         <div></div>

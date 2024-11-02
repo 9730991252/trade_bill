@@ -111,8 +111,12 @@ def cart_qty(request):
             s.save()
         cart.qty = int(cart_qty_input)
         cart.save()
-            
-    return JsonResponse({'t': 't'})
+    context={
+        'cart':Cart.objects.filter(office_employee_id=cart.office_employee.id),
+        'employee_id':cart.office_employee.id
+    }
+    t = render_to_string('ajax/office/add_to_item_weight.html', context)
+    return JsonResponse({'t': t})
 
 def remove_item_weight(request):
     if request.method == 'GET':

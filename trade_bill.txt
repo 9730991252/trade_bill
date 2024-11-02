@@ -31,6 +31,10 @@ virtualenv venv
 source venv/bin/activate
 
 
+***** install django ******
+
+pip install django
+
 ****************migrations******
 python3 manage.py makemigrations
 
@@ -39,9 +43,6 @@ python3 manage.py makemigrations
 python3 manage.py migrate
 
 
-***** install django ******
-
-pip install django
 
 ******** Install Gunicorn ******
  
