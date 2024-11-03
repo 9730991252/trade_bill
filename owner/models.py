@@ -24,6 +24,7 @@ class Stock_item(models.Model):
     qty = models.IntegerField()
     stock_qty = models.IntegerField(null=True)
     weight = models.IntegerField()
+    purchase_amount = models.FloatField(null=True)
     stock_weight = models.IntegerField()
     vehicle_number = models.CharField(max_length=100)
     date = models.DateField(auto_now_add=True)
@@ -31,6 +32,7 @@ class Stock_item(models.Model):
     stock_status = models.IntegerField(default=1)
     party_name = models.CharField(max_length=200, null=True)
     status = models.IntegerField(default=1)
+    
     
 class Customer(models.Model):
     shope = models.ForeignKey(Shope,on_delete=models.PROTECT,null=True)

@@ -16,6 +16,18 @@ def item_search_by_category(request):
         t = render_to_string('ajax/office/item_search_by_category.html', context)
     return JsonResponse({'t': t})
 
+def search_item_by_words(request):
+    if request.method == 'GET':
+        words = request.GET['words']
+        shope_id = request.GET['shope_id']
+        if words:
+            item = Stock_item.objects.filter(Q(item_name_english__icontains=words, shope_id=shope_id))
+        context={
+            'item': item
+        }
+        t = render_to_string('ajax/office/item_search_by_category.html', context)
+    return JsonResponse({'t': t})
+
 def customer_check(request):
     if request.method == 'GET':
         c = ''

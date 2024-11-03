@@ -96,7 +96,8 @@
             {% for c in cart %}
             <br>
             <div class="cart_item_main_box">
-                <div class="remove_cart_item_box" data-bs-toggle="modal" data-bs-target="#exampleModal1{{c.id}}" >X</div>
+                {% item_weight_detail_sum c.id as n %}
+                {% if n or c.qty %}{% else %}<div class="remove_cart_item_box" data-bs-toggle="modal" data-bs-target="#exampleModal1{{c.id}}" >X</div>{% endif %}
                 <div class="cart_item_name_box">
                     <b>{{c.stock_item.item_name_marathi}}</b>
                     <p>शिल्लक  वजन  {{c.stock_item.stock_weight}}, नग  {{c.stock_item.stock_qty}}</p>
@@ -109,7 +110,7 @@
                 <div class="main_head">रक्कम</div>
                 <div>{% item_weight_detail c.id %}</div>
                 <div class=""><input type="number" value="{% if c.qty == 0 %}{% else %}{{c.qty}}{% endif %}" id="cart_qty{{c.id}}" style="width: 40px;" required></div>
-                <div class="">{% item_weight_detail_sum c.id as n %} <input type="text" value="{% if n == 0 %}{% else %}{{n}}{% endif %}" style="width: 40px;" required readonly="readonly"></div>
+                <div class=""> <input type="text" value="{% if n == 0 %}{% else %}{{n}}{% endif %}" style="width: 40px;" required readonly="readonly"></div>
                 <div class=""  ><input value="{% if c.prise == 0 %}{% else %}{{c.prise | floatformat:0}}{% endif %}" type="number" id="prise{{c.id}}"  style="width: 40px;" required></div>
                 <div class="" id="set_amount_div{{c.id}}">{% calculete_item_prise n c.prise %}</div>
             </div> 
@@ -177,12 +178,14 @@
         </div>
     </div>
     
-    <button type="submit" class="btn btn-danger mb-2" name="complete_bill">बिल पूर्ण करा</button>
+    <button type="submit" class="btn btn-danger mb-2 mt-2" name="complete_bill">बिल पूर्ण करा</button>
 </div>
 {% endif %}
 </div>
     </form>
 </div>
+
+
 
 <!---------------------------------------------------------->
 <div class="category_box mt-3 text-center" >
@@ -193,8 +196,40 @@
 <div id="result"></div>
 
 
-
+<style>
+    .footer{
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 5px;
+        background-color: rgb(206, 206, 206);
+        input{
+            width: 90%;
+            margin: 0 auto;
+        }
+    }
+</style>
+<div class="footer">
+    <div><input oninput="search_item()" id="item_search_input" type="text" class="form-control" placeholder="शोधा"></div>
+</div>
+<br>
+<br>
+<br>
 <script>
+function search_item(){
+    $.ajax({
+        url: "{% url 'search_item_by_words' %}",
+        method: "GET",
+        data:{
+            words:document.getElementById('item_search_input').value,
+            shope_id:'{{employee.shope.id}}'
+            },
+        success: function(res){
+            $("#result").html(res.t)
+        }
+            })
+}
 function check_weight_greter(stock_weight, c_id){
     input_weight = document.getElementById('weight'+c_id).value;
     

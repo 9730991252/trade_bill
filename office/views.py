@@ -136,6 +136,7 @@ def stock(request):
             stock_weight = request.POST.get('weight')
             vehicle_number = request.POST.get('vehicle_number')
             party_name = request.POST.get('party_name')
+            purchase_amount = request.POST.get('purchase_amount')
             Stock_item(
                 office_employee_id=e.id,
                 shope_id=e.shope.id,
@@ -147,7 +148,8 @@ def stock(request):
                 weight=weight,
                 stock_weight=stock_weight,
                 vehicle_number=vehicle_number,
-                party_name=party_name
+                party_name=party_name,
+                purchase_amount=purchase_amount,
             ).save()
         context={
             'employee':e,
@@ -272,3 +274,24 @@ def completed_bills(request):
         return render(request, 'office/completed_bills.html', context)
     else:
         return redirect('/')
+    
+    
+    
+    
+    
+def report(request):
+    if request.session.has_key('office_mobile'):
+        mobile = request.session['office_mobile']
+        e = office_employee.objects.filter(mobile=mobile, status=1).first()
+        context={
+            'employee':e,
+            'stock':Stock_item.objects.filter(shope_id=e.shope.id).order_by('item_category', '-id'),
+
+        }
+        return render(request, 'office/report.html', context)
+    else:
+        return redirect('/')
+    
+    
+    
+    

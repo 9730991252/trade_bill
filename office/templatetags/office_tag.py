@@ -65,3 +65,36 @@ def sell_qty(qty, stock_qty):
     if qty and stock_qty:
         sell_qty = qty - stock_qty
         return sell_qty
+    
+@register.simple_tag
+def total_hamali(stock_id):
+    order_detail = Order_detail.objects.filter(stock_item_id=stock_id)
+    master = 0
+    for o in order_detail:
+        order_filter = o.order_filter
+        m = order_master.objects.filter(order_filter=order_filter).first()
+        if m:
+            master += m.hamali
+    return(master)
+
+@register.simple_tag
+def sell_amount(purchase_amount,stock_id):
+    p = 0
+    if purchase_amount != None:
+        o = Order_detail.objects.filter(stock_item_id=stock_id)
+        if o :
+            for o in o:
+                amount = (o.prise * o.weight)
+                p += amount
+        return p
+    
+from django.utils.safestring import mark_safe
+@register.simple_tag
+def profit_loss(purchase_amount, sell_amount):
+    if purchase_amount != None:
+        if int(sell_amount) > int(purchase_amount):
+            t = ('<div class="text-success"><i class="fa-regular fa-face-smile"></i>&nbsp;&nbsp; <b>'+ str((int(sell_amount) - int(purchase_amount))) +'</b></div>')
+        if int(sell_amount) < int(purchase_amount):
+            t = ('<div class="text-danger"><i class="fa-regular fa-face-sad-tear"></i>&nbsp;&nbsp; <b>'+ str((int(sell_amount) - int(purchase_amount))) +'</b></div>')
+
+        return mark_safe(t)

@@ -8,4 +8,5 @@ urlpatterns = [
     path('new_bill/', views.new_bill, name='new_bill'),
     path('completed_view_bill/<int:order_filter>', views.completed_view_bill, name='completed_view_bill'),
     path('completed_bills/', views.completed_bills, name='completed_bills'),
+    path('report/', views.report, name='report'),
 ]
