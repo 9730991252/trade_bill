@@ -24,7 +24,7 @@ def login(request):
                 request.session['office_mobile'] = request.POST["number"]
                 return redirect('office_home')
             else:
-                return redirect('/office/')
+                return redirect('/login/')
     return render(request, 'home/login.html')
 
 
