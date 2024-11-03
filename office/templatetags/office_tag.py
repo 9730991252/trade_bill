@@ -98,3 +98,31 @@ def profit_loss(purchase_amount, sell_amount):
             t = ('<div class="text-danger"><i class="fa-regular fa-face-sad-tear"></i>&nbsp;&nbsp; <b>'+ str((int(sell_amount) - int(purchase_amount))) +'</b></div>')
 
         return mark_safe(t)
+
+@register.inclusion_tag('inclusion_tag/office/item_stock_summary.html')
+def item_stock_summary(shope_id,item_stock_id):
+    order_detail = []
+    if item_stock_id:
+        employee = office_employee.objects.filter(shope_id=shope_id)
+        if employee:
+            for e in employee:
+                o = Order_detail.objects.filter(office_employee_id=e.id,stock_item_id=item_stock_id).first()
+                if o:
+                    order_detail.append(o)
+        return{
+            'order_detail':order_detail
+        }
+
+from django.utils.safestring import mark_safe
+@register.simple_tag
+def employee_weight(stock_id, e_id):
+    weight = 0
+    qty = 0
+    if stock_id:
+        if e_id:
+            order_datail = Order_detail.objects.filter(stock_item_id=stock_id, office_employee_id=e_id)
+            for o in order_datail:
+                weight += o.weight
+                qty += o.qty
+    t = ('Weight '+ str(weight) +'- Qty '+ str(qty) +'')
+    return mark_safe(t)
