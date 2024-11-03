@@ -9,4 +9,5 @@ urlpatterns = [
     path('completed_view_bill/<int:order_filter>', views.completed_view_bill, name='completed_view_bill'),
     path('completed_bills/', views.completed_bills, name='completed_bills'),
     path('report/', views.report, name='report'),
+    path('employee_sell_item/', views.employee_sell_item, name='employee_sell_item'),
 ]

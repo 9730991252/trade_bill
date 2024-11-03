@@ -112,7 +112,7 @@
                 <div class=""><input type="number" value="{% if c.qty == 0 %}{% else %}{{c.qty}}{% endif %}" id="cart_qty{{c.id}}" style="width: 40px;" required></div>
                 <div class=""> <input type="text" value="{% if n == 0 %}{% else %}{{n}}{% endif %}" style="width: 40px;" required readonly="readonly"></div>
                 <div class=""  ><input value="{% if c.prise == 0 %}{% else %}{{c.prise | floatformat:0}}{% endif %}" type="number" id="prise{{c.id}}"  style="width: 40px;" required></div>
-                <div class="" id="set_amount_div{{c.id}}">{% calculete_item_prise n c.prise %}</div>
+                <div class="" id="set_amount_div{{c.id}}">{% calculete_item_prise n c.prise as calculete_item_prise %}<input type="text" value="{% if calculete_item_prise == 0.0 %}{% else %}{{calculete_item_prise}}{% endif %}" required></div>
             </div> 
                 <div class="card_item_box" style="border: none;">
                     <div  style="text-align: start; display: flex; gap: 10px;" >
@@ -153,23 +153,23 @@
             <div class="other_charges_box" >
                 <div class="other_charges">
                     <div class="lable">हमाली</div>
-                    <div class="containt"> <input type="number" name="hamali" id="हमाली" oninput="total_amount_calculate('{{total_item_amount}}')"  required> </div>
+                    <div class="containt"> <input type="number" class="check_zero1" name="hamali" id="हमाली" oninput="total_amount_calculate('{{total_item_amount}}'),check_zero('हमाली')"  required> </div>
                 </div>
                 <div class="other_charges">
                     <div class="lable">तोलाई</div>
-                    <div class="containt"> <input type="number" name="tolai" id="तोलाई" oninput="total_amount_calculate('{{total_item_amount}}')" required> </div>
+                    <div class="containt"> <input type="number" class="check_zero2" name="tolai" id="तोलाई" oninput="total_amount_calculate('{{total_item_amount}}'),check_zero('तोलाई')" required> </div>
                 </div>
                 <div class="other_charges">
             <div class="lable">आडत</div>
-            <div class="containt"> <input type="number" name="aadat" id="आडत" oninput="total_amount_calculate('{{total_item_amount}}')"  required> </div>
+            <div class="containt"> <input type="number" name="aadat" class="check_zero3" id="आडत" oninput="total_amount_calculate('{{total_item_amount}}'),check_zero('आडत')"  required> </div>
         </div>
         <div class="other_charges">
             <div class="lable">शेअर्स</div>
-            <div class="containt"> <input type="number" name="shears" id="शेअर्स" oninput="total_amount_calculate('{{total_item_amount}}')" required> </div>
+            <div class="containt"> <input type="number" name="shears" class="check_zero4" id="शेअर्स" oninput="total_amount_calculate('{{total_item_amount}}'),check_zero('शेअर्स')" required> </div>
         </div>
         <div class="other_charges">
             <div class="lable">इतर</div>
-            <div class="containt"> <input type="number" name="eater" id="इतर" oninput="total_amount_calculate('{{total_item_amount}}')" required> </div>
+            <div class="containt"> <input type="number" name="eater" id="इतर" class="check_zero5" oninput="total_amount_calculate('{{total_item_amount}}'),check_zero('इतर')" required> </div>
         </div>
         <div class="other_charges">
             <div class="lable">एकूण</div>
@@ -217,6 +217,14 @@
 <br>
 <br>
 <script>
+function check_zero(id){
+    element_id =""+ id +""
+    number = document.getElementById(element_id).value;
+    
+    if (Number(number) < 0){
+        document.getElementById(element_id).value = ''
+    }
+}
 function search_item(){
     $.ajax({
         url: "{% url 'search_item_by_words' %}",

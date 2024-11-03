@@ -278,7 +278,7 @@ def completed_bills(request):
     
     
     
-    
+@csrf_exempt
 def report(request):
     if request.session.has_key('office_mobile'):
         mobile = request.session['office_mobile']
@@ -289,6 +289,49 @@ def report(request):
 
         }
         return render(request, 'office/report.html', context)
+    else:
+        return redirect('/')
+    
+@csrf_exempt
+def employee_sell_item(request):
+    if request.session.has_key('office_mobile'):
+        mobile = request.session['office_mobile']
+        e = office_employee.objects.filter(mobile=mobile, status=1).first()
+        from_date = ''
+        to_date = ''
+        order_detail = ''
+        selected_employee = ''
+        if 'employee_detail'in request.POST:
+            from_date = request.POST.get('from_date')
+            to_date = request.POST.get('to_date')
+            employee_id = request.POST.get('employee_id')
+            order_detail = []
+            if employee_id == '0':
+                print('hi')
+                selected_employee = ''
+                stock_item = Stock_item.objects.filter(shope_id=e.shope_id)
+                if stock_item:
+                    for s in stock_item:
+                        o = Order_detail.objects.filter(date__gte=from_date,date__lte=to_date,stock_item_id=s.id).first()
+                        if o:
+                            order_detail.append(o)
+            else:
+                selected_employee = office_employee.objects.filter(status=1, id=employee_id).first()
+                stock_item = Stock_item.objects.filter(shope_id=e.shope_id)
+                if stock_item:
+                    for s in stock_item:
+                        o = Order_detail.objects.filter(date__gte=from_date,date__lte=to_date,office_employee_id=employee_id, stock_item_id=s.id).first()
+                        if o:
+                            order_detail.append(o)
+        context={
+            'employee':e,
+            'all_employee':office_employee.objects.filter(status = 1, shope_id=e.shope_id),
+            'from_date':from_date,
+            'to_date':to_date,
+            'selected_employee':selected_employee,
+            'order_detail':order_detail
+        }
+        return render(request, 'office/employee_sell_item.html', context)
     else:
         return redirect('/')
     

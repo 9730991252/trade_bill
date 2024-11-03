@@ -1,0 +1,93 @@
+{% extends 'home/base.html' %}
+{% block head %}
+{% endblock head %}
+{% block content %}
+{% load office_tag %}
+{% include 'include/alert.html' %}
+<div>
+    welcome - {{employee.name}}
+</div>
+{% include 'include/office/office_menu.html' %}
+<br>
+{% include 'include/office/report.html' %}
+
+<style>
+    .form_box{
+        display: grid;
+        grid-template-columns: repeat(auto-fit, 350px);
+        justify-content: space-between;
+        input{
+            width: 340px;
+        }
+    }
+</style>
+
+<div class="container">
+    <form method="POST">
+        <div class="form_box">
+            <div class="from_date_box">
+                <Label>From</Label><br>
+                <input type="date" name="from_date" class="form-control" placeholder="From Date" required>
+            </div>
+            <div class="to_date_box">
+                <Label>To</Label><br>
+                <input type="date" name="to_date" class="form-control" placeholder="To Date" required>
+            </div>
+        </div>
+        <br>
+        <div class="employee_box">
+            <Label>Employee</Label><br>
+            <select class="form-select" name="employee_id" aria-label="Default select example" required>
+                <option value="">Select Employee</option>
+                <option value="0">All</option>
+                {% for e in all_employee %}
+                <option value="{{e.id}}">{{e.name}}</option>
+                {% endfor %}
+            </select>    
+        </div>
+        <br>
+        <button type="submit" class="btn btn-primary" name="employee_detail">Search</button>
+    </form>
+
+    <hr><br>
+
+
+
+<div>
+    {% if order_detail %}
+    <div class="text-center" style="display: flex;gap: 10px;">
+        <label>From - {{from_date}}</label>
+        <label>To - {{to_date}}</label>&nbsp; - &nbsp;
+        <label>{{selected_employee.name}}</label>
+    </div>
+    <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Item</th>
+            <th scope="col">Weight</th>
+            <th scope="col">Qty</th>
+            <th scope="col">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for o in order_detail %}
+                <tr>
+                    <th scope="row">{{forloop.counter}}</th>
+                    <td>{{o.stock_item.item_name_marathi}}</td>
+                    <td>{% employee_weight_report o.stock_item.id selected_employee.id %}</td>
+                    <td>{% employee_qty_report o.stock_item.id selected_employee.id %}</td>
+                    <td>{% total_amount_report selected_employee.id o.stock_item.id  from_date to_date  %}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+      <div class="text-center">{% total_item_amount_report selected_employee.id from_date to_date %}</div>
+      {% endif %}
+    </div>
+
+
+
+
+</div>
+{% endblock content %}
