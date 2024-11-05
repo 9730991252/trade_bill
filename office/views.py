@@ -256,8 +256,8 @@ def completed_view_bill(request, order_filter):
         print(order_filter)
         context={
             'employee':e,
-            'order_master':order_master.objects.filter(order_filter=order_filter).first(),
-            'order_detail':Order_detail.objects.filter(order_filter=order_filter),
+            'order_master':order_master.objects.filter(shope_id=e.shope_id,order_filter=order_filter).first(),
+            'order_detail':Order_detail.objects.filter(shope_id=e.shope_id,order_filter=order_filter),
         }
         return render(request, 'office/completed_view_bill.html', context)
     else:

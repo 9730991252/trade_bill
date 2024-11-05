@@ -109,14 +109,14 @@
                 <div class="main_head">दर</div>
                 <div class="main_head">रक्कम</div>
                 <div>{% item_weight_detail c.id %}</div>
-                <div class=""><input type="number" value="{% if c.qty == 0 %}{% else %}{{c.qty}}{% endif %}" id="cart_qty{{c.id}}" style="width: 40px;" required></div>
+                <div class=""><input type="number" oninput="check_zero('cart_qty{{c.id}}')" value="{% if c.qty == 0 %}{% else %}{{c.qty}}{% endif %}" id="cart_qty{{c.id}}" style="width: 40px;" required></div>
                 <div class=""> <input type="text" value="{% if n == 0 %}{% else %}{{n}}{% endif %}" style="width: 40px;" required readonly="readonly"></div>
-                <div class=""  ><input value="{% if c.prise == 0 %}{% else %}{{c.prise | floatformat:0}}{% endif %}" type="number" id="prise{{c.id}}"  style="width: 40px;" required></div>
-                <div class="" id="set_amount_div{{c.id}}">{% calculete_item_prise n c.prise as calculete_item_prise %}<input type="text" value="{% if calculete_item_prise == 0.0 %}{% else %}{{calculete_item_prise}}{% endif %}" required></div>
+                <div class=""  ><input value="{% if c.prise == 0 %}{% else %}{{c.prise | floatformat:0}}{% endif %}" type="number" id="prise{{c.id}}" oninput="check_zero('prise{{c.id}}')"  style="width: 40px;" required></div>
+                <div class="" id="set_amount_div{{c.id}}">{% calculete_item_prise n c.prise as calculete_item_prise %}<input type="text" value="{% if calculete_item_prise == 0.0 %}{% else %}{{calculete_item_prise}}{% endif %}" style="width: 60px;" required></div>
             </div> 
                 <div class="card_item_box" style="border: none;">
                     <div  style="text-align: start; display: flex; gap: 10px;" >
-                        <div><input style="width: 100px;" id="weight{{c.id}}" oninput="check_weight_greter('{{c.stock_item.stock_weight}}','{{c.id}}')" placeholder="वजन टाका" type="number"></div>
+                        <div><input style="width: 100px;" id="weight{{c.id}}" oninput="check_weight_greter('{{c.stock_item.stock_weight}}','{{c.id}}'),check_zero('weight{{c.id}}')" placeholder="वजन टाका" type="number"></div>
                         <div ><h6 style="font-size: 20px;" onclick="add_to_item_weight('{{c.id}}','{{c.stock_item.id}}')">+</h6></div>
                     </div>
                     <div><p class="mb-0"><i onclick="cart_qty('{{c.id}}')" class="fa-solid fa-check"></i></p></div>
