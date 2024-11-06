@@ -91,13 +91,15 @@ def sell_amount(purchase_amount,stock_id):
 from django.utils.safestring import mark_safe
 @register.simple_tag
 def profit_loss(purchase_amount, sell_amount):
+    t = ('')
     if purchase_amount != None:
         if int(sell_amount) > int(purchase_amount):
             t = ('<div class="text-success"><i class="fa-regular fa-face-smile"></i>&nbsp;&nbsp; <b>'+ str((int(sell_amount) - int(purchase_amount))) +'</b></div>')
         if int(sell_amount) < int(purchase_amount):
             t = ('<div class="text-danger"><i class="fa-regular fa-face-sad-tear"></i>&nbsp;&nbsp; <b>'+ str((int(sell_amount) - int(purchase_amount))) +'</b></div>')
 
-        return mark_safe(t)
+    return mark_safe(t)
+        
 
 @register.inclusion_tag('inclusion_tag/office/item_stock_summary.html')
 def item_stock_summary(shope_id,item_stock_id):
