@@ -58,7 +58,7 @@
             </div>
             <div class="mb-3">
                 <label for="">Purchase Amount</label>
-                <input type="text" class="form-control" name="purchase_amount" required>
+                <input type="number" class="form-control" oninput="check_zero('purchase_amount')" id="purchase_amount" name="purchase_amount" required>
             </div>
             <div class="mb-3">
                 <button type="submit" name="Add_stock" class="btn btn-success">Add</button>
@@ -84,35 +84,73 @@
         border: 1px solid black;
         border-radius: 10px;
         margin-bottom: 10px;
-        padding: 10px;
+        position: relative;
     }
     .flex{
         display: flex;
         gap: 10px;
         justify-content: center;
     }
+    .item_name{
+      background-color: rgb(178, 255, 255);
+      width: 100%;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+      padding: 10px;
+      font-weight: 700;
+    }
+    .category_name{
+      position: absolute;
+      right: 10px;
+      top: 0;
+    }
   </style>
   <div class="text-center">
     {% for s in stock %}
         <div class="stock_box">
-            <div><b>{{s.item_category.name}}</b></div>
-            <div class="flex">
+            <div class="category_name">{{s.item_category.name}}</div>
+            <div class="flex item_name">
                 <div>{{s.item_name_marathi}}</div>
             </div>
-            <div class="flex">
+            <div class="flex" style="justify-content: space-evenly;">
+              <div>Weight - {{s.weight}}</div>
                 <div>qty - {{s.qty}}</div>
-                <div>Weight - {{s.weight}}</div>
             </div>
             <div class="flex">
-            <div>{{s.vehicle_number}}</div>
+            <div style="text-transform: uppercase;">{{s.vehicle_number}}</div>
             <div>{{s.party_name}}</div>
             </div>
             <div class="flex" style="justify-content: space-between;">
                 <div>Added By - {{s.office_employee.name}}</div>
                 <div>{{s.date}}</div>
             </div>
+            <div class="flex" style="justify-content: space-between;">
+              <div>Purchase Rs.</div>
+              <div><input type="number" oninput="check_zero('purchase_amount1')" id="purchase_amount1" value="{{s.purchase_amount}}" class="form-control"></div>
+              <div><i class="fa-solid fa-check" onclick="set_purchase_amount('{{s.id}}')"></i></div>
+              <div>  &nbsp; </div>
+            </div>
+            <div id="status_success{{s.id}}"></div>
         </div>
     {% endfor %}
   </div>
 </div>
+
+<script>
+  function set_purchase_amount(s_id){
+
+    $.ajax({
+      url: "{% url 'set_purchase_amount' %}",
+      method: "GET",
+      data:{
+        s_id:s_id,
+        purchase_amount:document.getElementById('purchase_amount1').value
+            },
+      success: function(res){
+          document.getElementById('status_success'+s_id).innerHTML = `<p class="text-success">Set Successfully</p>`
+      }
+    })
+  }
+</script>
+{% include 'include/check_zero.html' %}
 {% endblock content %}

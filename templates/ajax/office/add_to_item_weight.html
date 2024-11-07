@@ -1,5 +1,5 @@
 {% load office_tag %}
-{% total_item_amount employee.id as total_item_amount %}
+{% total_item_amount employee_id as total_item_amount %}
 {% for c in cart %}
 <br>
 <div class="cart_item_main_box">
@@ -91,7 +91,7 @@
 
 
 <script>
-    function total_amount_calculate(old_amount){
+function total_amount_calculate(old_amount){
     new_amount = Number(old_amount) +
              (
                 Number(document.getElementById('हमाली').value) + 

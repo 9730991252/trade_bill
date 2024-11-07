@@ -150,3 +150,12 @@ def remove_item_weight(request):
         }
         t = render_to_string('ajax/office/add_to_item_weight.html', context)
     return JsonResponse({'t': t})
+
+def set_purchase_amount(request):
+    if request.method == 'GET':
+        s_id = request.GET['s_id']
+        purchase_amount = request.GET['purchase_amount']
+        s = Stock_item.objects.filter(id=s_id).first()
+        s.purchase_amount =purchase_amount
+        s.save()
+    return JsonResponse({'t': 't'})
