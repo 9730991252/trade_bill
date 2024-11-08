@@ -113,10 +113,12 @@ def cart_qty(request):
         if cart_qty == '':
             cart_qty = 0
         if cart_qty_input > str(cart_qty):
+            q = (cart_qty - int(cart_qty_input))
             s = Stock_item.objects.filter(id=cart.stock_item.id).first()
-            s.stock_qty -= int(cart_qty_input)
+            s.stock_qty += q
             s.save()
         if cart_qty_input < str(cart_qty):
+            print('hi')
             new_qty = (cart_qty - int(cart_qty_input))
             s = Stock_item.objects.filter(id=cart.stock_item.id).first()
             s.stock_qty += new_qty
