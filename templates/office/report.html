@@ -72,8 +72,8 @@
                     <div><b>विक्री </b> - &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; वजन   <b>{% sell_weight s.weight s.stock_weight %}</b></div>
                     <div>नग   <b>{% sell_qty s.qty s.stock_qty %}</b></div>
                 </div>
-                <div class="flex" style="justify-content: space-between;">
-                    <div><b>शिल्लक</b> - &nbsp; वजन   <b>{{s.stock_weight}}</b></div>
+                <div  {% if s.stock_status == 0 %} class="flex text-center alert alert-warning" {% else %} class="flex" {% endif %} style="justify-content: space-between;">
+                    <div>{% if s.stock_status == 0 %} <b>घट</b>{% else %} <b>शिल्लक</b> {% endif %}- &nbsp; वजन   <b>{{s.stock_weight}}</b></div>
                     <div>नग   <b>{{s.stock_qty}}</b></div>
                 </div>
                 <div class="flex">

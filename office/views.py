@@ -155,6 +155,11 @@ def stock(request):
                 party_name=party_name,
                 purchase_amount=purchase_amount,
             ).save()
+        if 'close_stock'in request.POST:
+            stock_id = request.POST.get('stock_id')
+            s = Stock_item.objects.filter(id=stock_id).first()
+            s.stock_status = 0
+            s.save()
         context={
             'employee':e,
             'item_category':Item_category.objects.filter(shope_id=e.shope.id, status=1),
