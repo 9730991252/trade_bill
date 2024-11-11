@@ -30,6 +30,10 @@
                     <label for="owner_name">Name</label>
                     <input type="text" id="name" name="name" placeholder="Name" class="form-control" required>
                 </div>
+                <div class="mb-3">
+                    <label for="shears">Shears</label>
+                    <input type="text" id="shears" name="shears" placeholder="Shears" class="form-control" required>
+                </div>
                 <div class="mb-2 mt-1">
                     <button type="submit" name="Add_item_category" class="btn btn-primary">Add</button>
                 </div>
@@ -49,6 +53,7 @@
           <tr>
             <th scope="col">#</th>
             <th scope="col">Name</th>
+            <th scope="col">Shears</th>
             <th scope="col">Status</th>
             <th scope="col">Edit</th>
           </tr>
@@ -58,6 +63,7 @@
           <tr>
             <th scope="row">{{forloop.counter}}</th>
             <td>{{i.name}}</td>
+            <td>{{i.shears}}</td>
             <td><form class="" method="POST">{% csrf_token %}{% if i.status == 1 %}<button class="btn btn-success" type="submit" name="active">Active<input type="hidden" name="id" value="{{i.id}}"></button>{% else %}<button class="btn btn-danger" type="submit" name="deactive">Deactive<input type="hidden" name="id" value="{{i.id}}"></button>{% endif %}</form></td>
             <td><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Add_shope{{i.id}}">Edit</button></td>
           </tr>
@@ -74,6 +80,10 @@
                     <div class="mb-3">
                         <label for="owner_name">Name</label>
                         <input type="text" id="name" value="{{i.name}}" name="name" placeholder="Name" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                      <label for="shears">Shears</label>
+                      <input type="text" id="shears" name="shears" value="{{i.shears}}" placeholder="Shears" class="form-control" required>
                     </div>
                     <div class="mb-2 mt-1">
                         <button type="submit" name="Edit_item_category" class="btn btn-primary">Add</button>

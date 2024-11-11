@@ -4,7 +4,7 @@
 <br>
 <div class="cart_item_main_box">
     {% item_weight_detail_sum c.id as n %}
-    {% if n or c.qty %}{% else %}<div class="remove_cart_item_box" data-bs-toggle="modal" data-bs-target="#exampleModal1{{c.id}}" >X</div>{% endif %}
+    {% if n or c.qty %}{% else %}<div class="remove_cart_item_box" data-bs-toggle="modal" data-bs-target="#exampleModal123{{c.id}}" >X</div>{% endif %}
     <div class="cart_item_name_box">
         <b>{{c.stock_item.item_name_marathi}}</b>
         <p>शिल्लक  वजन  {{c.stock_item.stock_weight}}, नग  {{c.stock_item.stock_qty}}</p>
@@ -15,26 +15,26 @@
     <div class="main_head">वजन</div>
     <div class="main_head">दर</div>
     <div class="main_head">रक्कम</div>
-    <div>{% item_weight_detail c.id %}</div>
-    <div class=""><input type="number" oninput="check_zero('cart_qty{{c.id}}')" value="{% if c.qty == 0 %}{% else %}{{c.qty}}{% endif %}" id="cart_qty{{c.id}}" style="width: 40px;" required></div>
-    <div class=""> <input type="text" value="{% if n == 0 %}{% else %}{{n}}{% endif %}" style="width: 40px;" required readonly="readonly"></div>
-    <div class=""  ><input value="{% if c.prise == 0 %}{% else %}{{c.prise | floatformat:0}}{% endif %}" type="number" id="prise{{c.id}}" oninput="check_zero('prise{{c.id}}')"  style="width: 40px;" required></div>
-    <div class="" id="set_amount_div{{c.id}}">{% calculete_item_prise n c.prise as calculete_item_prise %}<input type="text" value="{% if calculete_item_prise == 0.0 %}{% else %}{{calculete_item_prise}}{% endif %}" style="width: 60px;" required></div>
+    <div class="main_containt">{% item_weight_detail c.id %}</div>
+    <div class="main_containt"><input type="number" oninput="check_zero('cart_qty{{c.id}}'),check_input_show_btn_for_prise_and_qty('{% if c.qty == 0 %}{% else %}{{c.qty}}{% endif %}' ,'cart_qty', 'qty_btn', '{{c.id}}')" value="{% if c.qty == 0 %}{% else %}{{c.qty}}{% endif %}" id="cart_qty{{c.id}}" style="width: 40px;" required><br><p class="mb-0"><i style="display: none;" onclick="cart_qty('{{c.id}}')" id="qty_btn{{c.id}}" class="fa-solid fa-check"></i></p></div>
+    <div class="main_containt"> <input type="text" value="{% if n == 0 %}{% else %}{{n}}{% endif %}" style="width: 40px;" required readonly="readonly"></div>
+    <div class="main_containt"  ><input step="any" value="{% if c.prise == 0 %}{% else %}{{c.prise | floatformat:2}}{% endif %}" type="number" id="prise{{c.id}}" oninput="check_zero('prise{{c.id}}'),check_input_show_btn_for_prise_and_qty('{% if c.prise == 0 %}{% else %}{{c.prise | floatformat:2}}{% endif %}' ,'prise', 'prise_btn', '{{c.id}}')"  style="width: 40px;" required><br><p class="mb-0"><i style="display: none;" id="prise_btn{{c.id}}" onclick="calculete_prise('{{n}}','{{c.id}}'),total_amount_calculate('{{total_item_amount}}')" class="fa-solid fa-check"></i></p></div>
+    <div class="main_containt" id="set_amount_div{{c.id}}">{% calculete_item_prise n c.prise as calculete_item_prise %}<input type="text" value="{% if calculete_item_prise == 0.0 %}{% else %}{{calculete_item_prise}}{% endif %}" style="width: 60px;" required></div>
 </div> 
     <div class="card_item_box" style="border: none;">
         <div  style="text-align: start; display: flex; gap: 10px;" >
-            <div><input style="width: 100px;" id="weight{{c.id}}" oninput="check_weight_greter('{{c.stock_item.stock_weight}}','{{c.id}}'),check_zero('weight{{c.id}}')" placeholder="वजन टाका" type="number"></div>
-            <div ><h6 style="font-size: 20px;" onclick="add_to_item_weight('{{c.id}}','{{c.stock_item.id}}')">+</h6></div>
+            <div><input style="width: 100px;" id="weight{{c.id}}" oninput="check_weight_greter('{{c.stock_item.stock_weight}}','{{c.id}}'),check_zero('weight{{c.id}}'),check_input_show_btn('weight', 'add_weight_btn', '{{c.id}}')" placeholder="वजन टाका" type="number"></div>
+            <div ><button  id="add_weight_btn{{c.id}}" style="display: none;" onclick="add_to_item_weight('{{c.id}}','{{c.stock_item.id}}')" class="btn btn-primary btn-sm weight_btn">+</button></div>
         </div>
-        <div><p class="mb-0"><i onclick="cart_qty('{{c.id}}')" class="fa-solid fa-check"></i></p></div>
         <div></div>
-        <div><p class="mb-0"><i onclick="calculete_prise('{{n}}','{{c.id}}'),total_amount_calculate('{{total_item_amount}}')" class="fa-solid fa-check"></i></p></div>
+        <div></div>
+        <div></div>
         <div></div>
     </div>
 </div>
 
 <!-----------------------modal----------------------------------->
-<div class="modal fade" id="exampleModal1{{c.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="exampleModal123{{c.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -43,7 +43,7 @@
             </div>
             <div class="modal-body">
                 <b class="text-danger"> {{c.stock_item.item_name_marathi}} </b> कार्ट मधून  काढायचे आहे का ? <br><br>
-                <button class="btn btn-danger" data-bs-dismiss="modal" onclick="remove_cart_item('{{c.id}}')" name="remove_item_weight" >काढून टाका</button>
+                <a class="btn btn-danger" data-bs-dismiss="modal" onclick="remove_cart_item('{{c.id}}')" >काढून टाका</a>
         </div>
         <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -60,19 +60,19 @@
 <div class="other_charges_box" >
     <div class="other_charges">
         <div class="lable">हमाली</div>
-        <div class="containt"> <input type="number" class="check_zero1" name="hamali" id="हमाली" oninput="total_amount_calculate('{{total_item_amount}}'),check_zero('हमाली')"  required> </div>
+        <div class="containt"> <input type="number" value="0" class="check_zero1" name="hamali" id="हमाली" oninput="total_amount_calculate('{{total_item_amount}}'),check_zero('हमाली')"  required> </div>
     </div>
     <div class="other_charges">
         <div class="lable">तोलाई</div>
-        <div class="containt"> <input type="number" class="check_zero2" name="tolai" id="तोलाई" oninput="total_amount_calculate('{{total_item_amount}}'),check_zero('तोलाई')" required> </div>
+        <div class="containt"> <input type="number" value="0" class="check_zero2" name="tolai" id="तोलाई" oninput="total_amount_calculate('{{total_item_amount}}'),check_zero('तोलाई')" required> </div>
     </div>
     <div class="other_charges">
 <div class="lable">आडत</div>
-<div class="containt"> <input type="number" name="aadat" class="check_zero3" id="आडत" oninput="total_amount_calculate('{{total_item_amount}}'),check_zero('आडत')"  required> </div>
+<div class="containt"> <input type="number" name="aadat" value="0" class="check_zero3" id="आडत" oninput="total_amount_calculate('{{total_item_amount}}'),check_zero('आडत')"  required> </div>
 </div>
 <div class="other_charges">
 <div class="lable">शेअर्स</div>
-<div class="containt"> <input type="number" name="shears" class="check_zero4" id="शेअर्स" oninput="total_amount_calculate('{{total_item_amount}}'),check_zero('शेअर्स')" required> </div>
+<div class="containt"> <input type="number" value="{% calculete_shears employee.id %}" name="shears" class="check_zero4" id="शेअर्स" oninput="total_amount_calculate('{{total_item_amount}}'),check_zero('शेअर्स')" required> </div>
 </div>
 <div class="other_charges">
 <div class="lable">इतर</div>
@@ -85,7 +85,7 @@
 </div>
 </div>
 
-<button type="submit" class="btn btn-danger mb-2 mt-2" name="complete_bill">बिल पूर्ण करा</button>
+<button type="submit" class="btn btn-danger mb-2 mt-2" name="complete_bill" id="complete_bill">बिल पूर्ण करा</button>
 </div>
 {% endif %}
 

@@ -108,6 +108,7 @@
   <div class="text-center">
     {% for s in stock %}
         <div class="stock_box">
+          <div class="category_name" style="left: 10px;top: 5px; right: auto;"><button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal{{s.id}}">Close Stock</button></div>
             <div class="category_name">{{s.item_category.name}}</div>
             <div class="flex item_name">
                 <div>{{s.item_name_marathi}}</div>
@@ -132,11 +133,49 @@
             </div>
             <div id="status_success{{s.id}}"></div>
         </div>
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal{{s.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">खात्री करणे बाबत ... - {{s.item_name_marathi}}</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="text-start">
+            <form method="POST">
+              <input type="hidden" value="{{s.id}}" name="stock_id">
+              <div class="mb-3">
+                <label for="pin{{s.id}}">Delete Pin</label>
+                <input type="number" class="form-control" id="pin{{s.id}}" oninput="check_pin('pin{{s.id}}', 'close_stock_btn{{s.id}}')">
+              </div>
+              <button style="display: none;" class="btn btn-danger" name="close_stock" id="close_stock_btn{{s.id}}">Close</button>
+            </form>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
     {% endfor %}
   </div>
 </div>
 
+
 <script>
+  owner_pin = '{{employee.shope.pin}}'
+  function check_pin(input_id, btn_id){
+    input = document.getElementById(input_id).value
+    if (Number(input) == Number(owner_pin)){
+      document.getElementById(btn_id).style.display = 'unset'
+    }
+    if (Number(input) != Number(owner_pin)){
+      document.getElementById(btn_id).style.display = 'none'
+    }
+  }
+
   function set_purchase_amount(s_id){
 
     $.ajax({

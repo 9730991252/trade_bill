@@ -159,6 +159,29 @@ def employee_qty_report(stock_id, e_id):
             
     return qty
 
+@register.simple_tag
+def calculete_shears(employee_id):
+    if employee_id:
+        shears = 0
+        c = Cart.objects.filter(office_employee_id=employee_id)
+        if c:
+            for c in c:
+                it = Item_weight_detail.objects.filter(cart_id=c.id).aggregate(Sum('weight'))
+                it = it['weight__sum']
+                if it != None:
+                    i = it
+                if it == None:
+                    i = 0.0
+                print(it)
+                total_amount = c.prise * i
+                s = (c.stock_item.item_category.shears / 100) * total_amount
+                if s < 10:
+                    s = 10
+                shears += s
+        return shears
+    else:
+        return 0
+
 
 @register.simple_tag
 def total_amount_report(e_id, stock_item_id, from_date, to_date):

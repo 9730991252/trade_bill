@@ -85,18 +85,22 @@ def item_category(request):
         e = office_employee.objects.filter(mobile=mobile, status=1).first()
         if 'Add_item_category'in request.POST:
             name = request.POST.get('name')
+            shears = request.POST.get('shears')
             Item_category(
                 shope_id=e.shope.id,
                 name=name,
+                shears=shears,
             ).save()    
             return redirect('/office/item_category/')
         if 'Edit_item_category'in request.POST:
             id = request.POST.get('id')
             name = request.POST.get('name')
+            shears = request.POST.get('shears')
             Item_category(
                 id=id,
                 shope_id=e.shope.id,
                 name=name,
+                shears=shears,
             ).save()
             return redirect('/office/item_category/')
         if 'active'in request.POST:

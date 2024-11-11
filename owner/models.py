@@ -11,6 +11,7 @@ class office_employee(models.Model):
 class Item_category(models.Model):
     shope = models.ForeignKey(Shope,on_delete=models.PROTECT,null=True)
     name = models.CharField(max_length=100)
+    shears = models.FloatField(default=0)
     status = models.IntegerField(default=1)
 
 
