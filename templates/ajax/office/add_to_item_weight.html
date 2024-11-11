@@ -16,16 +16,18 @@
     <div class="main_head">दर</div>
     <div class="main_head">रक्कम</div>
     <div class="main_containt">{% item_weight_detail c.id %}</div>
-    <div class="main_containt"><input type="number" oninput="check_zero('cart_qty{{c.id}}'),check_input_show_btn_for_prise_and_qty('{% if c.qty == 0 %}{% else %}{{c.qty}}{% endif %}' ,'cart_qty', 'qty_btn', '{{c.id}}')" value="{% if c.qty == 0 %}{% else %}{{c.qty}}{% endif %}" id="cart_qty{{c.id}}" style="width: 40px;" required><br><p class="mb-0"><i style="display: none;" onclick="cart_qty('{{c.id}}')" id="qty_btn{{c.id}}" class="fa-solid fa-check"></i></p></div>
+    <div class="main_containt"><input type="number" oninput="check_zero('cart_qty{{c.id}}'),check_input_show_btn_for_prise_and_qty('{% if c.qty == 0 %}{% else %}{{c.qty}}{% endif %}' ,'cart_qty', 'qty_btn', '{{c.id}}'),check_stock_qty('{{c.stock_item.stock_qty}}', '{{c.id}}', '{{c.qty}}')" value="{% if c.qty == 0 %}{% else %}{{c.qty}}{% endif %}" id="cart_qty{{c.id}}" style="width: 40px;" required><br><p class="mb-0"><i style="display: none;" onclick="cart_qty('{{c.id}}')" id="qty_btn{{c.id}}" class="fa-solid fa-check"></i></p></div>
     <div class="main_containt"> <input type="text" value="{% if n == 0 %}{% else %}{{n}}{% endif %}" style="width: 40px;" required readonly="readonly"></div>
     <div class="main_containt"  ><input step="any" value="{% if c.prise == 0 %}{% else %}{{c.prise | floatformat:2}}{% endif %}" type="number" id="prise{{c.id}}" oninput="check_zero('prise{{c.id}}'),check_input_show_btn_for_prise_and_qty('{% if c.prise == 0 %}{% else %}{{c.prise | floatformat:2}}{% endif %}' ,'prise', 'prise_btn', '{{c.id}}')"  style="width: 40px;" required><br><p class="mb-0"><i style="display: none;" id="prise_btn{{c.id}}" onclick="calculete_prise('{{n}}','{{c.id}}'),total_amount_calculate('{{total_item_amount}}')" class="fa-solid fa-check"></i></p></div>
     <div class="main_containt" id="set_amount_div{{c.id}}">{% calculete_item_prise n c.prise as calculete_item_prise %}<input type="text" value="{% if calculete_item_prise == 0.0 %}{% else %}{{calculete_item_prise}}{% endif %}" style="width: 60px;" required></div>
 </div> 
     <div class="card_item_box" style="border: none;">
+        {% if c.stock_item.stock_qty != 0 %}
         <div  style="text-align: start; display: flex; gap: 10px;" >
             <div><input style="width: 100px;" id="weight{{c.id}}" oninput="check_weight_greter('{{c.stock_item.stock_weight}}','{{c.id}}'),check_zero('weight{{c.id}}'),check_input_show_btn('weight', 'add_weight_btn', '{{c.id}}')" placeholder="वजन टाका" type="number"></div>
             <div ><button  id="add_weight_btn{{c.id}}" style="display: none;" onclick="add_to_item_weight('{{c.id}}','{{c.stock_item.id}}')" class="btn btn-primary btn-sm weight_btn">+</button></div>
         </div>
+        {% endif %}
         <div></div>
         <div></div>
         <div></div>
@@ -91,6 +93,7 @@
 
 
 <script>
+    
 function total_amount_calculate(old_amount){
     new_amount = Number(old_amount) +
              (
