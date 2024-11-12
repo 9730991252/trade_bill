@@ -20,6 +20,21 @@
             width: 340px;
         }
     }
+    .other_charges_box{
+        padding: 5px;
+        display: flex;
+        gap: 2px;
+        justify-content: space-between;
+    }
+    .other_charges{
+        padding: 5px;
+        display: flex;
+        gap: 10px;
+        flex-direction: column;
+        input{
+            width: 50px;
+        }
+    }
 </style>
 
 <div class="container">
@@ -82,7 +97,38 @@
             {% endfor %}
         </tbody>
       </table>
-      <div class="text-center">{% total_item_amount_report selected_employee.id from_date to_date %}</div>
+      <div class="other_charges_box" >
+        <div class="other_charges">
+            <div class="lable">हमाली</div>
+            <div class="containt">{{hamali}}</div>
+        </div>
+        <div class="other_charges">
+            <div class="lable">तोलाई</div>
+            <div class="containt">{{tolai}}</div>
+        </div>
+        <div class="other_charges">
+    <div class="lable">आडत</div>
+    <div class="containt">{{aadat}}</div>
+</div>
+<div class="other_charges">
+    <div class="lable">शेअर्स</div>
+    <div class="containt">{{shears}}</div>
+</div>
+<div class="other_charges">
+    <div class="lable">इतर</div>
+    <div class="containt">{{eater}}</div>
+</div>
+<div class="other_charges">
+    <div class="lable">एकूण</div>
+    <div class="containt" id="total_item_amount_box"><b><b>Rs.{% total_item_amount_report selected_employee.id from_date to_date employee.shope_id %}</b></b></div>
+</div>
+</div>
+      <div class="p-3 border" style="display: grid;grid-template-columns: repeat(auto-fit, 300px);" >
+        <div>Pending &nbsp; <b>Rs.{{total_pending_amount| floatformat:2}}</b></div>
+        <div>Cash &nbsp; <b>Rs.{{cash | floatformat:2}}</b></div>
+        <div>PhonePe &nbsp; <b>Rs.{{phonepe | floatformat:2}}</b></div>
+        <div>Total &nbsp; <b>Rs.{{total_credit_amount | floatformat:2}}</b></div>
+      </div>
       {% endif %}
     </div>
 

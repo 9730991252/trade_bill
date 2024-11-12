@@ -80,10 +80,11 @@
                     <div>विक्री रक्कम<b> &nbsp; {% sell_amount s.purchase_amount s.id as n %}{{n}}</b></div>
                 </div>
                 <div class="flex">
-                    <div>{% profit_loss s.purchase_amount n %}</div>
+                    <div>{% profit_loss s.purchase_amount s.vehicle_charges n %}</div>
                 </div>
                 <div class="flex" style="justify-content: space-between;">
                     <div>Added By - {{s.office_employee.name}}</div>
+                    <div>मोटार भाडे  <b>Rs.{{s.vehicle_charges}}</b></div>
                     <div>{{s.date}}</div>
                 </div>
             </div>

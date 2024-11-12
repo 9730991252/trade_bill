@@ -33,11 +33,14 @@
     <div class="main">
         {% for o in order_master %}
             <div class="card_box">
-                <div class="flex" style="justify-content: space-between;">
-                    <div class="bill_number">Bill Number - <b>{{o.order_filter}}</b></div>
+                <div class="flex" style="justify-content: center;">
+                    <div class="bill_number flex mb-2">Bill Number - <b>{{o.order_filter}}</b></div>
+                </div>
+                <div class="flex" style="justify-content: space-around;">
+                    <div class="date"><b>Rs.{{o.total}}</b></div>
                     <div class="date">{{o.ordered_date}}</div>
                 </div>
-                <div class="office_employee">By - {{o.office_employee.name}}</div>
+                <div class="office_employee m-2">By - {{o.office_employee.name}}</div>
                 {% if o.customer == None %}{% else %}
                 <div class="customer_box flex" style="justify-content: space-between;">
                     <div class="customer_name">नांव - {{o.customer.name}}</div>

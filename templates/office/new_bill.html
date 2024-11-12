@@ -232,6 +232,8 @@
 <br>
 <br>
 <script>
+    old_amount = '{{total_item_amount}}'
+    total_amount_calculate(old_amount)
 function check_stock_qty(stock_qty, c_id, c_qty){
     input = document.getElementById('cart_qty'+c_id).value;
     if (Number(c_qty) > Number(input)){

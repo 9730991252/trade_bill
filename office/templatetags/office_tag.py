@@ -90,7 +90,8 @@ def sell_amount(purchase_amount,stock_id):
     
 from django.utils.safestring import mark_safe
 @register.simple_tag
-def profit_loss(purchase_amount, sell_amount):
+def profit_loss(purchase_amount,vehicle_charges, sell_amount):
+    purchase_amount += vehicle_charges
     t = ('')
     if purchase_amount != None:
         if int(sell_amount) > int(purchase_amount):
@@ -126,7 +127,7 @@ def employee_weight(stock_id, e_id):
             for o in order_datail:
                 weight += o.weight
                 qty += o.qty
-    t = ('Weight '+ str(weight) +'- Qty '+ str(qty) +'')
+    t = ('वजन '+ str(weight) +'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; नग '+ str(qty) +'')
     return mark_safe(t)
 
 @register.simple_tag
@@ -180,7 +181,7 @@ def calculete_shears(employee_id):
                 shears += s
         return shears
     else:
-        return 0
+        return 0 
 
 
 @register.simple_tag
@@ -201,17 +202,13 @@ def total_amount_report(e_id, stock_item_id, from_date, to_date):
         return total_amount
     
 @register.simple_tag
-def total_item_amount_report(e_id, from_date, to_date):
+def total_item_amount_report(e_id, from_date, to_date, shope_id):
     total_amount = 0
     if e_id:
-        o = Order_detail.objects.filter(date__gte=from_date,date__lte=to_date,office_employee_id=e_id)
-        for o in o:
-            amount = o.weight * o.prise
-            total_amount += amount
+        om = order_master.objects.filter(date__gte=from_date,date__lte=to_date,shope_id=shope_id, office_employee_id=e_id).aggregate(Sum('total'))
+        total_amount = om['total__sum']
         return total_amount
     else:
-        o = Order_detail.objects.filter(date__gte=from_date,date__lte=to_date)
-        for o in o:
-            amount = o.weight * o.prise
-            total_amount += amount
-        return total_amount
+        om = order_master.objects.filter(date__gte=from_date,date__lte=to_date,shope_id=shope_id).aggregate(Sum('total'))
+        total_amount = om['total__sum']
+        return total_amount 

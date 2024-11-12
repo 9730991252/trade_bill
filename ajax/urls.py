@@ -10,4 +10,7 @@ urlpatterns = [
     path('remove_item_weight', views.remove_item_weight, name='remove_item_weight'),
     path('search_item_by_words', views.search_item_by_words, name='search_item_by_words'),
     path('set_purchase_amount', views.set_purchase_amount, name='set_purchase_amount'),
+    path('save_cash_amount', views.save_cash_amount, name='save_cash_amount'),
+    path('save_phonepe_amount', views.save_phonepe_amount, name='save_phonepe_amount'),
+    path('set_vehicle_charges', views.set_vehicle_charges, name='set_vehicle_charges'),
 ]

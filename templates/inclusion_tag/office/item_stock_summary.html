@@ -9,6 +9,6 @@
 </style>
 <div class="columm_flex">
 {% for o in order_detail %}
-    <div class="flex"><b>{{o.office_employee.name}}</b> - {% employee_weight o.stock_item.id o.office_employee.id %}  - Rs. <b>{% calculete_item_prise o.weight o.prise %}</b></div>
+    <div class="flex"><b>{{o.office_employee.name}}</b> - {% employee_weight o.stock_item.id o.office_employee.id %} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Rs. <b>{% calculete_item_prise o.weight o.prise %}</b></div>
 {% endfor %}
 </div>

@@ -1,0 +1,10 @@
+{% for c in cash_transition %}
+    <div>Cash </div>
+    <div><b>Rs.{{c.amount}}</b></div>
+{% endfor %}
+{% for pt in phonepe_transition %}
+    <div>{{pt.phonepe_number.phonepe_number}} </div>
+    <div><b>Rs.{{pt.amount}}</b></div>
+{% endfor %}
+<div style="background-color: rgb(194, 255, 255); border-radius: 5px;">Total</div>
+<div style="background-color: rgb(0, 255, 255); border-radius: 5px;"><b>Rs.{{total_credit}}</b></div>

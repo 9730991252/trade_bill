@@ -33,6 +33,7 @@ class Stock_item(models.Model):
     stock_status = models.IntegerField(default=1)
     party_name = models.CharField(max_length=200, null=True)
     status = models.IntegerField(default=1)
+    vehicle_charges = models.FloatField(default=0)
     
     
 class Customer(models.Model):
@@ -82,3 +83,26 @@ class Item_weight_detail(models.Model):
     cart_id = models.CharField(max_length=100,null=True)
     weight = models.IntegerField()
     order_detail = models.ForeignKey(Order_detail,on_delete=models.PROTECT,null=True)
+    
+    
+class Cash_transition(models.Model):
+    shope = models.ForeignKey(Shope,on_delete=models.PROTECT,null=True)
+    office_employee = models.ForeignKey(office_employee,on_delete=models.PROTECT,null=True)
+    order_master = models.ForeignKey(order_master,on_delete=models.PROTECT,null=True)
+    amount = models.FloatField()
+    date = models.DateField(auto_now_add=True)
+    added_date = models.DateTimeField(auto_now_add=True)
+    
+class Phonepe_number(models.Model):
+    shope = models.ForeignKey(Shope,on_delete=models.PROTECT,null=True)
+    phonepe_name = models.CharField(max_length=100)
+    phonepe_number = models.IntegerField()
+    status = models.IntegerField(default=1)
+class Phonepe_transition(models.Model):
+    shope = models.ForeignKey(Shope,on_delete=models.PROTECT,null=True)
+    office_employee = models.ForeignKey(office_employee,on_delete=models.PROTECT,null=True)
+    phonepe_number = models.ForeignKey(Phonepe_number,on_delete=models.PROTECT,null=True)
+    order_master = models.ForeignKey(order_master,on_delete=models.PROTECT,null=True)
+    amount = models.FloatField()
+    date = models.DateField(auto_now_add=True)
+    added_date = models.DateTimeField(auto_now_add=True)

@@ -3,6 +3,7 @@ from django.shortcuts import render
 from owner.models import *
 from django.template.loader import *
 from django.db.models import Q
+from django.db.models import Avg, Sum, Min, Max
 # Create your views here.
 def item_search_by_category(request):
     if request.method == 'GET':
@@ -161,3 +162,86 @@ def set_purchase_amount(request):
         s.purchase_amount =purchase_amount
         s.save()
     return JsonResponse({'t': 't'})
+
+def set_vehicle_charges(request):
+    if request.method == 'GET':
+        s_id = request.GET['s_id']
+        set_vehicle_charges = request.GET['set_vehicle_charges']
+        s = Stock_item.objects.filter(id=s_id).first()
+        s.vehicle_charges =set_vehicle_charges
+        s.save()
+    return JsonResponse({'t': 't'})
+
+def save_cash_amount(request):
+    if request.method == 'GET':
+        shope_id = request.GET['shope_id']
+        office_employee_id = request.GET['office_employee_id']
+        order_master_id = request.GET['order_master_id']
+        amount = request.GET['cash_amount']
+        Cash_transition(
+            shope_id=shope_id,
+            office_employee_id=office_employee_id,
+            amount=amount,
+            order_master_id=order_master_id
+        ).save()
+        om = order_master.objects.filter(shope_id=shope_id,id=order_master_id).first()
+        total_pending_amount = om.total
+        if Cash_transition.objects.filter(order_master_id=om.id).exists() or Phonepe_transition.objects.filter(order_master_id=om.id).exists():
+            c = Cash_transition.objects.filter(order_master_id=om.id).aggregate(Sum('amount'))
+            cash = c['amount__sum']
+            if cash == None:
+                cash = 0
+            if cash:
+                total_pending_amount -= cash  
+            p = Phonepe_transition.objects.filter(order_master_id=om.id).aggregate(Sum('amount'))
+            phonepe = p['amount__sum']
+            if phonepe == None:
+                phonepe = 0
+            if phonepe:
+                total_pending_amount -= phonepe
+        total_credit = cash + phonepe  
+    context={
+        'cash_transition':Cash_transition.objects.filter(shope_id=shope_id,order_master_id=order_master_id),
+        'phonepe_transition':Phonepe_transition.objects.filter(shope_id=shope_id,order_master_id=order_master_id),
+        'total_credit':total_credit
+    }
+    t = render_to_string('ajax/office/transition_histry.html', context)
+    return JsonResponse({'t': t, 'total_pending_amount':total_pending_amount})
+
+def save_phonepe_amount(request):
+    if request.method == 'GET':
+        shope_id = request.GET['shope_id']
+        office_employee_id = request.GET['office_employee_id']
+        order_master_id = request.GET['order_master_id']
+        amount = request.GET['cash_amount']
+        phonepe_number_id = request.GET['phonepe_number_id']
+        Phonepe_transition(
+            shope_id=shope_id,
+            office_employee_id=office_employee_id,
+            phonepe_number_id=phonepe_number_id,
+            amount=amount,
+            order_master_id=order_master_id
+        ).save()
+        om = order_master.objects.filter(shope_id=shope_id,id=order_master_id).first()
+        total_pending_amount = om.total
+        if Cash_transition.objects.filter(order_master_id=om.id).exists() or Phonepe_transition.objects.filter(order_master_id=om.id).exists():
+            c = Cash_transition.objects.filter(order_master_id=om.id).aggregate(Sum('amount'))
+            cash = c['amount__sum']
+            if cash == None:
+                cash = 0
+            if cash:
+                total_pending_amount -= cash  
+            p = Phonepe_transition.objects.filter(order_master_id=om.id).aggregate(Sum('amount'))
+            phonepe = p['amount__sum']
+            if phonepe == None:
+                phonepe = 0
+            if phonepe:
+                total_pending_amount -= phonepe  
+        total_credit = cash + phonepe
+    context={
+        'cash_transition':Cash_transition.objects.filter(shope_id=shope_id,order_master_id=order_master_id),
+        'phonepe_transition':Phonepe_transition.objects.filter(shope_id=shope_id,order_master_id=order_master_id),
+        'total_credit':total_credit
+    }
+    t = render_to_string('ajax/office/transition_histry.html', context)
+    return JsonResponse({'t': t, 'total_pending_amount':total_pending_amount})
