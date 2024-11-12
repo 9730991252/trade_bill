@@ -37,11 +37,11 @@ def customer_check(request):
         mobile = request.GET['mobile']
         shope_id = request.GET['shope_id']
         if 4 < len(name) :
-            c = Customer.objects.filter(Q(name__icontains=name))
+            c = Customer.objects.filter(Q(name__icontains=name),shope_id=shope_id)
         if 4 < len(address) :
-            c = Customer.objects.filter(Q(address__icontains=address))
+            c = Customer.objects.filter(Q(address__icontains=address),shope_id=shope_id)
         if 4 < len(mobile) :
-            c = Customer.objects.filter(Q(mobile__icontains=name))
+            c = Customer.objects.filter(Q(mobile__icontains=name),shope_id=shope_id)
         context={
             'c':c[0:3]
         }
