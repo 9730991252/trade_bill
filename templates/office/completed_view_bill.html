@@ -203,16 +203,25 @@ a{
 </div>
 </div>
 <div class="advertise ad_a">All type Mobile Software - <a href="https://digitalkarmala.com/contact_us/">9730 99 1252</a> </div></a>
-
 <div class="hide container">
-    <div class="mb-3 mt-2 border p-3 text-center" style="display: flex;gap: 10px; background-color: rgba(255, 191, 191, 0.774);">
-        <label for="cash">बाकी </label>
-        <input type="text" style="text-align: center;font-weight: 700;color: white; background-color: red;" class="form-control" value="{{total_pending_amount}}"  id="total_pending_amount" readonly>
+    <div id="pending_box" class="mb-3 mt-2 border p-3 text-center" {% if total_pending_amount != 0.0 %} style="display: flex;justify-content: space-evenly; gap: 10px;background-color: rgba(255, 191, 191, 0.774);" {% else %} style="display: flex;justify-content: space-evenly; gap: 10px;background-color: rgba(196, 255, 162, 0.774);" {% endif %}>
+        <div>
+            <label for="cash">बाकी </label>
+            <input type="text" {% if total_pending_amount != 0.0 %} style="text-align: center;font-weight: 700;color: white; background-color: red;" {% else %} style="text-align: center;font-weight: 700;color: rgb(0, 0, 0); background-color: rgb(81, 255, 0);"{% endif %} class="form-control" value="{{total_pending_amount}}"  id="total_pending_amount" readonly>
+        </div>
+        <div>
+            <div><label for="cash">Discount</label></div>
+            <div class="flex" style="display: flex;gap: 10px;">
+                <div><input type="number" style="text-align: center;font-weight: 700;color: rgb(0, 0, 0); background-color: rgb(253, 255, 128);" class="form-control" placeholder="Discount" value="{{order_master.discount}}" oninput="check_descount('{{total_pending_amount}}')"  id="discount"></div>
+                <div id="discount_btn" style="display: none;" onclick="save_discount_amount('discount')"><button class="btn btn-success"><i class="fa-solid fa-check"></i></button></div>
+            </div>
+
+        </div>
     </div>
     <div class="mb-3 mt-2 border p-3 text-center" style="background-color: rgb(202, 255, 202);">
         <label for="cash">रोख</label>
         <div class="" style="display: flex;gap: 10px;">
-            <input  placeholder="रक्कम टाका" type="text" class="form-control"  id="cash_amount" oninput="check_cash_amount('{{total_pending_amount}}')">
+            <input  placeholder="रक्कम टाका" type="number" class="form-control"  id="cash_amount" oninput="check_cash_amount('{{total_pending_amount}}')">
             <div id="cash_btn" style="display: none;" onclick="save_cash_amount()"><button class="btn btn-success"><i class="fa-solid fa-check"></i></button></div>
         </div>
     </div>
@@ -220,7 +229,7 @@ a{
         <div class="mb-3 mt-2 border p-3 text-center" style="background-color: hsl(236, 100%, 80%);">
             <label for="cash">{{p.phonepe_name}} - {{p.phonepe_number}}</label>
             <div class="" style="display: flex;gap: 10px;">
-                <input placeholder="रक्कम टाका" type="text" class="form-control"  id="phonepe_amount{{p.id}}" oninput="check_phonepe_amount('phonepe_amount{{p.id}}', 'phonepe_btn{{p.id}}', '{{total_pending_amount}}')">
+                <input placeholder="रक्कम टाका" type="number" class="form-control"  id="phonepe_amount{{p.id}}" oninput="check_phonepe_amount('phonepe_amount{{p.id}}', 'phonepe_btn{{p.id}}', '{{total_pending_amount}}')">
                 <div id="phonepe_btn{{p.id}}" style="display: none;" onclick="save_phonepe_amount('{{p.id}}','phonepe_amount{{p.id}}')"><button class="btn btn-success"><i class="fa-solid fa-check"></i></button></div>
             </div>
         </div>
@@ -267,6 +276,24 @@ a{
             input = document.getElementById(input_id).value = ''
         }
     }
+    function check_descount(pending_amount){
+        input = document.getElementById('discount').value
+        if(Number(input) > 0){
+            document.getElementById('discount_btn').style.display = 'unset'
+        }
+        if(Number(input) < 1){
+            document.getElementById('discount_btn').style.display = 'none'
+        }
+        if(Number(input) > Number(pending_amount)){
+            document.getElementById('discount_btn').style.display = 'none'
+            input = document.getElementById('discount').value = ''
+        }
+        if(Number(input) < 0){
+            document.getElementById('discount_btn').style.display = 'none'
+            input = document.getElementById('discount').value = ''
+        }
+
+    }
     function check_cash_amount(pending_amount){
         input = document.getElementById('cash_amount').value
         if(Number(input) > 0){
@@ -285,6 +312,30 @@ a{
         }
 
     }
+    function save_discount_amount(input_id){
+        d = document.getElementById(input_id).value
+        $.ajax({
+            url: "{% url 'save_discount_amount' %}",
+            method: "GET",
+            data:{
+                shope_id:shope_id,
+                office_employee_id:employee_id,
+                order_master_id:order_master_id,
+                discount_amount:document.getElementById(input_id).value
+                },
+                success: function(res){
+                    document.getElementById(input_id).value = ''
+                    document.getElementById('transition_histry').innerHTML = res.t
+                    document.getElementById('discount').value = d
+                    document.getElementById('total_pending_amount').value = res.total_pending_amount
+                    document.getElementById('discount_btn').style.display = 'none'
+                    if (res.total_pending_amount == 0.0){
+                        document.getElementById('total_pending_amount').style.backgroundColor = 'rgb(81, 255, 0)'
+                        document.getElementById('pending_box').style.backgroundColor = 'rgba(196, 255, 162, 0.774)'
+                    }
+            }
+        })
+    }
     function save_phonepe_amount(phonepe_id, input_id){
         $.ajax({
             url: "{% url 'save_phonepe_amount' %}",
@@ -301,6 +352,10 @@ a{
                     document.getElementById('transition_histry').innerHTML = res.t
                     document.getElementById('total_pending_amount').value = res.total_pending_amount
                     document.getElementById('phonepe_btn'+phonepe_id).style.display = 'none'
+                    if (res.total_pending_amount == 0.0){
+                        document.getElementById('total_pending_amount').style.backgroundColor = 'rgb(81, 255, 0)'
+                        document.getElementById('pending_box').style.backgroundColor = 'rgba(196, 255, 162, 0.774)'
+                    }
             }
         })
     }
@@ -319,6 +374,10 @@ a{
                 document.getElementById('transition_histry').innerHTML = res.t
                 document.getElementById('total_pending_amount').value = res.total_pending_amount
                 document.getElementById('cash_btn').style.display = 'none'
+                if (res.total_pending_amount == 0.0){
+                    document.getElementById('total_pending_amount').style.backgroundColor = 'rgb(81, 255, 0)'
+                    document.getElementById('pending_box').style.backgroundColor = 'rgba(196, 255, 162, 0.774)'
+                }
             }
         })
     }

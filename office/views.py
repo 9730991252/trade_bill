@@ -268,6 +268,7 @@ def completed_view_bill(request, order_filter):
         e = office_employee.objects.filter(mobile=mobile, status=1).first()
         om = order_master.objects.filter(shope_id=e.shope_id,order_filter=order_filter).first()
         total_pending_amount = om.total
+        total_pending_amount -= om.discount
         total_credit = 0
         cash = 0
         if Cash_transition.objects.filter(order_master_id=om.id).exists() or Phonepe_transition.objects.filter(order_master_id=om.id).exists():
@@ -283,7 +284,6 @@ def completed_view_bill(request, order_filter):
                 phonepe = 0
             if phonepe:
                 total_pending_amount -= phonepe  
-            
             total_credit = cash + phonepe
         context={
             'employee':e,

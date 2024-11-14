@@ -13,4 +13,5 @@ urlpatterns = [
     path('save_cash_amount', views.save_cash_amount, name='save_cash_amount'),
     path('save_phonepe_amount', views.save_phonepe_amount, name='save_phonepe_amount'),
     path('set_vehicle_charges', views.set_vehicle_charges, name='set_vehicle_charges'),
+    path('save_discount_amount', views.save_discount_amount, name='save_discount_amount'),
 ]

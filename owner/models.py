@@ -63,9 +63,11 @@ class order_master(models.Model):
     shears = models.FloatField()
     eater  = models.FloatField()
     total  = models.FloatField()
+    discount  = models.FloatField(default=0)
     order_filter=models.IntegerField(default=True)
     date=models.DateField(auto_now_add=True,null=True)
     ordered_date = models.DateTimeField(auto_now_add=True,null=True)
+    
     
 class Order_detail(models.Model):
     shope = models.ForeignKey(Shope,on_delete=models.PROTECT,null=True)
