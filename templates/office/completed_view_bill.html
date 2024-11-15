@@ -207,7 +207,7 @@ a{
     <div id="pending_box" class="mb-3 mt-2 border p-3 text-center" {% if total_pending_amount != 0.0 %} style="display: flex;justify-content: space-evenly; gap: 10px;background-color: rgba(255, 191, 191, 0.774);" {% else %} style="display: flex;justify-content: space-evenly; gap: 10px;background-color: rgba(196, 255, 162, 0.774);" {% endif %}>
         <div>
             <label for="cash">बाकी </label>
-            <input type="text" {% if total_pending_amount != 0.0 %} style="text-align: center;font-weight: 700;color: white; background-color: red;" {% else %} style="text-align: center;font-weight: 700;color: rgb(0, 0, 0); background-color: rgb(81, 255, 0);"{% endif %} class="form-control" value="{{total_pending_amount}}"  id="total_pending_amount" readonly>
+            <input type="text" {% if total_pending_amount != 0.0 %} style="text-align: center;font-weight: 700;color: white; background-color: red;" {% else %} style="text-align: center;font-weight: 700;color: rgb(0, 0, 0); background-color: rgb(81, 255, 0);"{% endif %} class="form-control" value="{{total_pending_amount | floatformat:2}}"  id="total_pending_amount" readonly>
         </div>
         <div>
             <div><label for="cash">Discount</label></div>
