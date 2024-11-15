@@ -346,6 +346,8 @@ def employee_sell_item(request):
         aadat = 0
         shears = 0
         eater = 0
+        max_discount = ''
+        total_discount = ''
         total_pending_amount = 0
         if 'employee_detail'in request.POST:
             from_date = request.POST.get('from_date')
@@ -364,6 +366,24 @@ def employee_sell_item(request):
                             
                 om = order_master.objects.filter(shope_id=e.shope_id, date__gte=from_date,date__lte=to_date).aggregate(Sum('total'))
                 total_pending_amount = om['total__sum']
+                
+                
+                discount_om = order_master.objects.filter(shope_id=e.shope_id, date__gte=from_date, date__lte=to_date)
+
+                # Check if there are records in the QuerySet
+                if discount_om.exists():
+                    max_om = discount_om.aggregate(Max('discount'))
+                    max_discount = max_om['discount__max']
+                    
+                    sum_om = discount_om.aggregate(Sum('discount'))
+                    total_discount = sum_om['discount__sum']
+                    
+                    print("Max discount:", max_discount)
+                    print("Total discount:", total_discount)
+                else:
+                    print("No records found for the given filter criteria.")
+
+                
                 if Cash_transition.objects.filter(shope_id=e.shope_id, date__gte=from_date,date__lte=to_date).exists() or Phonepe_transition.objects.filter(shope_id=e.shope_id, date__gte=from_date,date__lte=to_date).exists():
                     c = Cash_transition.objects.filter(shope_id=e.shope_id, date__gte=from_date,date__lte=to_date).aggregate(Sum('amount'))
                     cash = c['amount__sum']
@@ -404,6 +424,20 @@ def employee_sell_item(request):
                             
                 om = order_master.objects.filter(office_employee_id=employee_id,shope_id=e.shope_id, date__gte=from_date,date__lte=to_date).aggregate(Sum('total'))
                 total_pending_amount = om['total__sum']
+                
+                discount_om = order_master.objects.filter(office_employee_id=employee_id,shope_id=e.shope_id, date__gte=from_date,date__lte=to_date)
+                if discount_om.exists():
+                    max_om = discount_om.aggregate(Max('discount'))
+                    max_discount = max_om['discount__max']
+                    
+                    sum_om = discount_om.aggregate(Sum('discount'))
+                    total_discount = sum_om['discount__sum']
+                    
+                    print("Max discount:", max_discount)
+                    print("Total discount:", total_discount)
+                else:
+                    print("No records found for the given filter criteria.")
+                
                 if Cash_transition.objects.filter(office_employee_id=employee_id,shope_id=e.shope_id, date__gte=from_date,date__lte=to_date).exists() or Phonepe_transition.objects.filter(shope_id=e.shope_id, date__gte=from_date,date__lte=to_date).exists():
                     c = Cash_transition.objects.filter(office_employee_id=employee_id,shope_id=e.shope_id, date__gte=from_date,date__lte=to_date).aggregate(Sum('amount'))
                     cash = c['amount__sum']
@@ -444,6 +478,8 @@ def employee_sell_item(request):
             'aadat':aadat,
             'shears':shears,
             'eater':eater,
+            'max_discount':max_discount,
+            'total_discount':total_discount
         }
         return render(request, 'office/employee_sell_item.html', context)
     else:

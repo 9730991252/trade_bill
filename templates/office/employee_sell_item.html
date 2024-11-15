@@ -68,6 +68,16 @@
 
 
 
+<style>
+    .order_box{
+        display: grid;
+        grid-template-columns: 1fr 2fr 1fr 1fr 2fr;
+    }
+    .order_box_head_containt{
+        font-weight: 700;
+        border-bottom: 1px solid black;
+    }
+</style>
 <div>
     {% if order_detail %}
     <div class="text-center" style="display: flex;gap: 10px;">
@@ -75,48 +85,47 @@
         <label>To - {{to_date}}</label>&nbsp; - &nbsp;
         <label>{{selected_employee.name}}</label>
     </div>
-    <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Item</th>
-            <th scope="col">Weight</th>
-            <th scope="col">Qty</th>
-            <th scope="col">Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-            {% for o in order_detail %}
-                <tr>
-                    <th scope="row">{{forloop.counter}}</th>
-                    <td>{{o.stock_item.item_name_marathi}}</td>
-                    <td>{% employee_weight_report o.stock_item.id selected_employee.id %}</td>
-                    <td>{% employee_qty_report o.stock_item.id selected_employee.id %}</td>
-                    <td>{% total_amount_report selected_employee.id o.stock_item.id  from_date to_date  %}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-      </table>
+    <div class="order_box">
+        <div class="order_box_head_containt">#</div>
+        <div class="order_box_head_containt">Item</div>
+        <div class="order_box_head_containt">Weight</div>
+        <div class="order_box_head_containt">Qty</div>
+        <div class="order_box_head_containt">Amount</div>
+        {% for o in order_detail %}
+            <div>{{forloop.counter}}</div>
+            <div><b>{{o.stock_item.item_name_marathi}}</b></div>
+            <div>{% employee_weight_report o.stock_item.id selected_employee.id %}</div>
+            <div>{% employee_qty_report o.stock_item.id selected_employee.id %}</div>
+            <div><b>{% total_amount_report selected_employee.id o.stock_item.id  from_date to_date  %}</b></div>
+            <div>^</div>
+            <div>सरासरी</div>
+            <div>जास्तीत - जास्त</div>
+            <div>कमीत - कमी</div>
+            <div></div>
+            {% average_min_max_price selected_employee.id o.stock_item.id  from_date to_date  %}</td>
+        {% endfor %}
+        </div>
+
       <div class="other_charges_box" >
         <div class="other_charges">
             <div class="lable">हमाली</div>
-            <div class="containt">{{hamali}}</div>
+            <div class="containt">{{hamali | floatformat:2}}</div>
         </div>
         <div class="other_charges">
             <div class="lable">तोलाई</div>
-            <div class="containt">{{tolai}}</div>
+            <div class="containt">{{tolai | floatformat:2}}</div>
         </div>
         <div class="other_charges">
     <div class="lable">आडत</div>
-    <div class="containt">{{aadat}}</div>
+    <div class="containt">{{aadat | floatformat:2}}</div>
 </div>
 <div class="other_charges">
     <div class="lable">शेअर्स</div>
-    <div class="containt">{{shears}}</div>
+    <div class="containt">{{shears | floatformat:2}}</div>
 </div>
 <div class="other_charges">
     <div class="lable">इतर</div>
-    <div class="containt">{{eater}}</div>
+    <div class="containt">{{eater | floatformat:2}}</div>
 </div>
 <div class="other_charges">
     <div class="lable">एकूण</div>
@@ -129,6 +138,11 @@
         <div>PhonePe &nbsp; <b>Rs.{{phonepe | floatformat:2}}</b></div>
         <div>Total &nbsp; <b>Rs.{{total_credit_amount | floatformat:2}}</b></div>
       </div>
+      <div class="p-3 border" style="display: grid;grid-template-columns: repeat(auto-fit, 300px);" >
+        <div><h5><b>Discount</b></h5></div>
+        <div>जास्तीत - जास्त &nbsp; <b>Rs.{{max_discount | floatformat:2}}</b></div>
+        <div>Total &nbsp; <b>Rs.{{total_discount | floatformat:2}}</b></div>
+      </div>
       {% endif %}
     </div>
 
@@ -136,4 +150,5 @@
 
 
 </div>
+<br><br><br>
 {% endblock content %}

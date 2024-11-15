@@ -143,6 +143,7 @@ def employee_weight_report(stock_id, e_id):
             order_datail = Order_detail.objects.filter(stock_item_id=stock_id)
             for o in order_datail:
                 weight += o.weight
+
     return weight
 
 @register.simple_tag
@@ -173,7 +174,6 @@ def calculete_shears(employee_id):
                     i = it
                 if it == None:
                     i = 0.0
-                print(it)
                 total_amount = c.prise * i
                 s = (c.stock_item.item_category.shears / 100) * total_amount
                 if s < 10:
@@ -207,8 +207,29 @@ def total_item_amount_report(e_id, from_date, to_date, shope_id):
     if e_id:
         om = order_master.objects.filter(date__gte=from_date,date__lte=to_date,shope_id=shope_id, office_employee_id=e_id).aggregate(Sum('total'))
         total_amount = om['total__sum']
-        return total_amount
+        return round(total_amount, 2)
     else:
         om = order_master.objects.filter(date__gte=from_date,date__lte=to_date,shope_id=shope_id).aggregate(Sum('total'))
         total_amount = om['total__sum']
-        return total_amount 
+        return round(total_amount, 2)
+    
+    
+@register.inclusion_tag('inclusion_tag/office/average_min_max_price.html')
+def average_min_max_price(e_id, stock_item_id, from_date, to_date):
+    if e_id:
+        avg_o = Order_detail.objects.filter(date__gte=from_date,date__lte=to_date,office_employee_id=e_id, stock_item_id=stock_item_id).aggregate(Avg('prise'))
+        max_o = Order_detail.objects.filter(date__gte=from_date,date__lte=to_date,office_employee_id=e_id, stock_item_id=stock_item_id).aggregate(Max('prise'))
+        min_o = Order_detail.objects.filter(date__gte=from_date,date__lte=to_date,office_employee_id=e_id, stock_item_id=stock_item_id).aggregate(Min('prise'))
+    else:
+        avg_o = Order_detail.objects.filter(date__gte=from_date,date__lte=to_date, stock_item_id=stock_item_id).aggregate(Avg('prise'))
+        max_o = Order_detail.objects.filter(date__gte=from_date,date__lte=to_date, stock_item_id=stock_item_id).aggregate(Max('prise'))
+        min_o = Order_detail.objects.filter(date__gte=from_date,date__lte=to_date, stock_item_id=stock_item_id).aggregate(Min('prise'))
+
+    avg = avg_o['prise__avg']
+    max = max_o['prise__max']
+    min = min_o['prise__min']
+    return {
+        'avg':avg,
+        'max':max,
+        'min':min,
+    }
