@@ -267,7 +267,7 @@ a{
         if(Number(input) < 1){
             document.getElementById(btn_id).style.display = 'none'
         }
-        if(Number(input) > Number(pending_amount)){
+        if(Number(input) >= Number(pending_amount)){
             document.getElementById(btn_id).style.display = 'none'
             input = document.getElementById(input_id).value = ''
         }
@@ -284,7 +284,7 @@ a{
         if(Number(input) < 1){
             document.getElementById('discount_btn').style.display = 'none'
         }
-        if(Number(input) > Number(pending_amount)){
+        if(Number(input) >= Number(pending_amount)){
             document.getElementById('discount_btn').style.display = 'none'
             input = document.getElementById('discount').value = ''
         }
@@ -302,7 +302,7 @@ a{
         if(Number(input) < 1){
             document.getElementById('cash_btn').style.display = 'none'
         }
-        if(Number(input) > Number(pending_amount)){
+        if(Number(input) >= Number(pending_amount)){
             document.getElementById('cash_btn').style.display = 'none'
             input = document.getElementById('cash_amount').value = ''
         }
