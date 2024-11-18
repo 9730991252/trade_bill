@@ -190,15 +190,15 @@ a{
 </div>
 <div class="other_charges">
     <div class="lable">शेअर्स</div>
-    <div class="containt">{{order_master.shears}}</div>
+    <div class="containt">{{order_master.shears | floatformat:2}}</div>
 </div>
 <div class="other_charges">
     <div class="lable">इतर</div>
-    <div class="containt">{{order_master.eater}}</div>
+    <div class="containt">{{order_master.eater | floatformat:2}}</div>
 </div>
 <div class="other_charges">
     <div class="lable">एकूण</div>
-    <div class="containt" id="total_item_amount_box"><b>{{order_master.total}}</b></div>
+    <div class="containt" id="total_item_amount_box"><b>{{order_master.total | floatformat:2}}</b></div>
 </div>
 </div>
 </div>
@@ -212,7 +212,7 @@ a{
         <div>
             <div><label for="cash">Discount</label></div>
             <div class="flex" style="display: flex;gap: 10px;">
-                <div><input type="number" style="text-align: center;font-weight: 700;color: rgb(0, 0, 0); background-color: rgb(253, 255, 128);" class="form-control" placeholder="Discount" value="{{order_master.discount}}" oninput="check_descount('{{total_pending_amount}}')"  id="discount"></div>
+                <div><input type="number" style="text-align: center;font-weight: 700;color: rgb(0, 0, 0); background-color: rgb(253, 255, 128);" class="form-control" placeholder="Discount" value="{% if order_master.discount != 0.0 %}{{order_master.discount | floatformat:2}}{% endif %}" oninput="check_descount('{{total_pending_amount}}')"  id="discount"></div>
                 <div id="discount_btn" style="display: none;" onclick="save_discount_amount('discount')"><button class="btn btn-success"><i class="fa-solid fa-check"></i></button></div>
             </div>
 
@@ -267,7 +267,7 @@ a{
         if(Number(input) < 1){
             document.getElementById(btn_id).style.display = 'none'
         }
-        if(Number(input) > Number(pending_amount)){
+        if(Number(input) >= Number(pending_amount)){
             document.getElementById(btn_id).style.display = 'none'
             input = document.getElementById(input_id).value = ''
         }
@@ -285,7 +285,6 @@ a{
             document.getElementById('discount_btn').style.display = 'none'
         }
         if(Number(input) > Number(pending_amount)){
-            alert('hi')
             document.getElementById('discount_btn').style.display = 'none'
             input = document.getElementById('discount').value = ''
         }

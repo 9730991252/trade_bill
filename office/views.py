@@ -3,6 +3,7 @@ from owner.models import *
 from django.views.decorators.csrf import csrf_exempt
 from office.helper import *
 from django.db.models import Avg, Sum, Min, Max
+import math
 # Create your views here.
 def office_home(request):
     if request.session.has_key('office_mobile'):
@@ -220,7 +221,7 @@ def new_bill(request):
                 aadat= float(aadat),
                 shears= float(shears),
                 eater= float(eater),
-                total= float(total),
+                total= float(eval(total)),
                 order_filter=order_filter,
             ).save()
             om = order_master.objects.filter(order_filter=order_filter).first()

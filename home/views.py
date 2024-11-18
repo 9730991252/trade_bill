@@ -3,6 +3,8 @@ from sunil.models import *
 from owner.models import *
 # Create your views here.
 def index(request):
+    o = order_master.objects.all().last()
+    print(o.total)
     return render(request, 'home/index.html')
 
 def login(request):
