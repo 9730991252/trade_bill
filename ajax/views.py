@@ -186,6 +186,7 @@ def save_cash_amount(request):
         ).save()
         om = order_master.objects.filter(shope_id=shope_id,id=order_master_id).first()
         total_pending_amount = om.total
+        total_pending_amount -= om.discount
         if Cash_transition.objects.filter(order_master_id=om.id).exists() or Phonepe_transition.objects.filter(order_master_id=om.id).exists():
             c = Cash_transition.objects.filter(order_master_id=om.id).aggregate(Sum('amount'))
             cash = c['amount__sum']
@@ -224,6 +225,7 @@ def save_phonepe_amount(request):
         ).save()
         om = order_master.objects.filter(shope_id=shope_id,id=order_master_id).first()
         total_pending_amount = om.total
+        total_pending_amount -= om.discount
         if Cash_transition.objects.filter(order_master_id=om.id).exists() or Phonepe_transition.objects.filter(order_master_id=om.id).exists():
             c = Cash_transition.objects.filter(order_master_id=om.id).aggregate(Sum('amount'))
             cash = c['amount__sum']
