@@ -221,7 +221,7 @@ def new_bill(request):
                 aadat= float(aadat),
                 shears= float(shears),
                 eater= float(eater),
-                total= float(eval(total)),
+                total= float(math.floor(float(total))),
                 order_filter=order_filter,
             ).save()
             om = order_master.objects.filter(order_filter=order_filter).first()
@@ -286,6 +286,7 @@ def completed_view_bill(request, order_filter):
             if phonepe:
                 total_pending_amount -= phonepe  
             total_credit = cash + phonepe
+        
         context={
             'employee':e,
             'order_master':om,
