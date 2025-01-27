@@ -35,6 +35,9 @@ source venv/bin/activate
 
 pip install django
 
+******************************
+
+
 ****************migrations******
 python3 manage.py makemigrations
 

@@ -1,5 +1,8 @@
 {% extends 'home/base.html' %}
 {% block head %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js" integrity="sha512-pdCVFUWsxl1A4g0uV6fyJ3nrnTGeWnZN2Tl/56j45UvZ1OMdm9CIbctuIHj+yBIRTUUyv6I9+OivXj4i0LPEYA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js" integrity="sha512-01CJ9/g7e8cUmY0DFTMcUw/ikS799FHiOA0eyHsUWfOetgbx/t6oV4otQ5zXKQyIrQGTHSmRVPIgrgLcZi/WMA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>    
+
 {% endblock head %}
 {% block content %}
 {% include 'include/alert.html' %}
@@ -13,8 +16,8 @@
     .bill_box{
         padding-top: 10px;
         width: 380px;
-        border: 1px solid black;
         margin: auto;
+        background-color: rgb(255, 255, 255);
     }
     .shope_name{
         text-align: center;
@@ -58,8 +61,7 @@
     }
     .containt_box{
         margin-top: 10px;
-        border-top: 1px solid black;
-        border-bottom: 1px solid black;
+        border: 1px solid black;
     }
     .containt_box_header, .containt_box_main_contaont{
         display: grid;
@@ -85,21 +87,22 @@
         }
     }
     .advertise{
-    display: none;
+        width: 3in;
+        margin: 0 auto;
+        font-size: 15px;
 
 }
 a{
     color: #000;
     text-decoration: none;
 }
-.bill_main_header{
-        display: none;
-    }
+
 </style>
 <style media="print">
     .bill_box{
         width: 3in;
         border: none;
+        
     }
     .hide{
         display: none;
@@ -116,9 +119,7 @@ a{
     }
     .advertise{
         display: unset;
-        width: 3in;
-        margin: 0 auto;
-        font-size: 15px;
+
     }
     .containt_box{
         border: 1px solid black;
@@ -133,6 +134,7 @@ a{
 </style>
 
 
+<div id="canvse">
 <div class="bill_box">
     <div class="header">
         <div class="bill_main_header">
@@ -145,15 +147,18 @@ a{
             <div class="bill_number">बिल नंबर - {{order_master.order_filter}}</div>
             <div class="date">दिनांक  - {{order_master.ordered_date}}</div>
         </div>
-        {% if order_master.customer == None %}
+        
+        {% if order_master.farmer_id == None %}
+        
         <div class="customer_box">
-            <div class="customer_name">नांव - </div>
+            <div class="customer_name">नांव - {{order_master.farmer.id}}</div>
             <div class="customer_mobile">मोबाइल - </div>
         </div>
         {% else %}
+        
         <div class="customer_box">
-            <div class="customer_name">नांव - {{order_master.customer.name}}</div>
-            <div class="customer_mobile">मोबाइल - {{order_master.customer.mobile}}</div>
+            <div class="customer_name">नांव - {{order_master.farmer.name}}</div>
+            <div class="customer_mobile">मोबाइल - {{order_master.farmer.mobile}}</div>
         </div>
         {% endif %}
     </div>
@@ -167,7 +172,7 @@ a{
         </div>
         {% for o in order_detail %}
         <div class="containt_box_main_contaont" style="border-top: 1px solid black;">
-            <div style="border: none;">{{o.stock_item.item_name_marathi}}</div>
+            <div style="border: none;">{{o.item.marathi_name}}</div>
             <div>{{o.qty}}</div>
             <div>{{o.weight}}</div>
             <div>{{o.prise}}</div>
@@ -203,59 +208,27 @@ a{
 </div>
 </div>
 <div class="advertise ad_a">All type Mobile Software - <a href="https://digitalkarmala.com/contact_us/">9730 99 1252</a> </div></a>
-<div class="hide container">
-    <div id="pending_box" class="mb-3 mt-2 border p-3 text-center" {% if total_pending_amount != 0.0 %} style="display: flex;justify-content: space-evenly; gap: 10px;background-color: rgba(255, 191, 191, 0.774);" {% else %} style="display: flex;justify-content: space-evenly; gap: 10px;background-color: rgba(196, 255, 162, 0.774);" {% endif %}>
-        <div>
-            <label for="cash">बाकी </label>
-            <input type="text" {% if total_pending_amount != 0.0 %} style="text-align: center;font-weight: 700;color: white; background-color: red;" {% else %} style="text-align: center;font-weight: 700;color: rgb(0, 0, 0); background-color: rgb(81, 255, 0);"{% endif %} class="form-control" value="{{total_pending_amount | floatformat:2}}"  id="total_pending_amount" readonly>
-        </div>
-        <div>
-            <div><label for="cash">Discount</label></div>
-            <div class="flex" style="display: flex;gap: 10px;">
-                <div><input type="number" style="text-align: center;font-weight: 700;color: rgb(0, 0, 0); background-color: rgb(253, 255, 128);" class="form-control" placeholder="Discount" value="{% if order_master.discount != 0.0 %}{{order_master.discount | floatformat:2}}{% endif %}" oninput="check_descount('{{total_pending_amount}}')"  id="discount"></div>
-                <div id="discount_btn" style="display: none;" onclick="save_discount_amount('discount')"><button class="btn btn-success"><i class="fa-solid fa-check"></i></button></div>
-            </div>
-
-        </div>
-    </div>
-    <div class="mb-3 mt-2 border p-3 text-center" style="background-color: rgb(202, 255, 202);">
-        <label for="cash">रोख</label>
-        <div class="" style="display: flex;gap: 10px;">
-            <input  placeholder="रक्कम टाका" type="number" class="form-control"  id="cash_amount" oninput="check_cash_amount('{{total_pending_amount}}')">
-            <div id="cash_btn" style="display: none;" onclick="save_cash_amount()"><button class="btn btn-success"><i class="fa-solid fa-check"></i></button></div>
-        </div>
-    </div>
-    {% for p in phonepe %}
-        <div class="mb-3 mt-2 border p-3 text-center" style="background-color: hsl(236, 100%, 80%);">
-            <label for="cash">{{p.phonepe_name}} - {{p.phonepe_number}}</label>
-            <div class="" style="display: flex;gap: 10px;">
-                <input placeholder="रक्कम टाका" type="number" class="form-control"  id="phonepe_amount{{p.id}}" oninput="check_phonepe_amount('phonepe_amount{{p.id}}', 'phonepe_btn{{p.id}}', '{{total_pending_amount}}')">
-                <div id="phonepe_btn{{p.id}}" style="display: none;" onclick="save_phonepe_amount('{{p.id}}','phonepe_amount{{p.id}}')"><button class="btn btn-success"><i class="fa-solid fa-check"></i></button></div>
-            </div>
-        </div>
-    {% endfor %}
-    <br>
-    <div class=" text-center p-3 border" id="transition_histry" style="display: grid;grid-template-columns: 2fr 1fr;">
-        {% for c in cash_transition %}
-            <div>Cash </div>
-            <div><b>Rs.{{c.amount}}</b></div>
-        {% endfor %}
-        {% for pt in phonepe_transition %}
-            <div>{{pt.phonepe_number.phonepe_number}} </div>
-            <div><b>Rs.{{pt.amount}}</b></div>
-        {% endfor %}
-        <div style="background-color: rgb(194, 255, 255); border-radius: 5px;">Total</div>
-        <div style="background-color: rgb(0, 255, 255); border-radius: 5px;"><b>Rs.{{total_credit}}</b></div>
-    </div>
 </div>
-
-
-<div class="text-center hide">
-    <button class="btn btn-primary" onclick="window.print()">Print</button>
+<br>
+<div class="text-center hide " style="display: flex;justify-content: space-evenly;">
+    <div> <button class="btn btn-primary " onclick="window.print()">Print</button></div>
+    <div> <a href="/office/genereate_purchase_bill_image/{{order_master.order_filter}}" class="btn btn-success " onclick="download_img()"><i class="fa fa-download" aria-hidden="true"></i></a></div>
 </div>
 
 
 <script>
+    function download_img(){
+        var canvas = document.getElementById("canvse");
+        domtoimage.toJpeg(canvas).then((data)=>{
+            var link =  document.createElement("a");
+            link.download = '{{bill.farmer.name}} '+ new Date().toLocaleString() +' .jpeg';
+            link.href = data;
+            link.click();
+        });
+
+
+    }
+
     shope_id = '{{employee.shope.id}}'
     employee_id = '{{employee.id}}'
     order_master_id = '{{order_master.id}}'

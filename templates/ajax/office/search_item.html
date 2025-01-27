@@ -1,0 +1,8 @@
+
+    {% for i in item %}
+    <form method="POST">
+        
+        <input type="hidden" name="item_id" value="{{i.id}}">
+        <button type="submit"  class="list-group-item list-group-item-action" name="add_to_cart" >{{i.marathi_name}}</button>
+    </form>
+    {% endfor %}

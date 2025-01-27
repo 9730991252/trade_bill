@@ -33,21 +33,27 @@
     <div class="main">
         {% for o in order_master %}
             <div class="card_box">
-                <div class="flex" style="justify-content: center;">
-                    <div class="bill_number flex mb-2">Bill Number - <b>{{o.order_filter}}</b></div>
+                <div class="flex" style="justify-content: space-evenly;">
+                    <div class="bill_number flex mb-2">Bill - <b>{{o.order_filter}}</b></div>
+                    <div class="date"><b>Rs.{{o.total}}</b></div>
                 </div>
                 <div class="flex" style="justify-content: space-around;">
-                    <div class="date"><b>Rs.{{o.total}}</b></div>
                     <div class="date">{{o.ordered_date}}</div>
                 </div>
-                <div class="office_employee m-2">By - {{o.office_employee.name}}</div>
-                {% if o.customer == None %}{% else %}
-                <div class="customer_box flex" style="justify-content: space-between;">
-                    <div class="customer_name">नांव - {{o.customer.name}}</div>
-                    <div class="customer_mobile">मोबाइल - {{o.customer.mobile}}</div>
+                {% if o.farmer != None %}
+                <div class="customer_box flex" style="justify-content: space-evenly;">
+                    <div class="customer_name">नांव - {{o.farmer.name}}</div>
+                    <div class="customer_mobile">मोबाइल - {{o.farmer.mobile}}</div>
                 </div>
+                <div class="office_employee m-2">By - {{o.office_employee.name}}</div>
+                <div class="flex">
+                    <a href="/office/completed_view_purchase_bill/{{o.order_filter}}" class="btn btn-success">View</a>
+                    <a href="" class="btn btn-danger">Pay</a>
+                </div>
+                {% else %}
+                <div class="office_employee m-2">By - {{o.office_employee.name}}</div>
+                <a href="/office/completed_view_purchase_bill/{{o.order_filter}}" class="btn btn-success">View</a>
                 {% endif %}
-                <a href="/office/completed_view_bill/{{o.order_filter}}" class="btn btn-success">View</a>
             </div>
         {% endfor %}
     </div>

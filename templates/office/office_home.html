@@ -8,92 +8,87 @@
     welcome - {{employee.name}}
 </div>
 {% include 'include/office/office_menu.html' %}
-
-
 <style>
-    .stock_box{
-        width: 92%;
-        margin: 0 auto;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        border: 1px solid black;
+    .item_box{
+        width: 90%;
+        height: fit-content;
+        padding: 5px;
+        margin-top: 10px;
+        background-color: rgb(179, 255, 201);
         border-radius: 10px;
-        margin-bottom: 20px;
-        position: relative;
-    }
-    .flex{
+        text-align: center;
         display: flex;
-        gap: 10px;
         justify-content: center;
-    }
-    .product_name{
-        background-color: rgb(193, 255, 255);
-        padding: 10px;
-        font-weight: 700;
-        border-top-left-radius: 10px;
-        border-top-right-radius: 10px;
-    }
-    .category_name{
-        position: absolute;
-        right: 10px;
-        top: 0;
+        gap: 40px;
     }
 </style>
-<style>
-    .other_charges_box{
-        justify-content: space-between;
-        display: flex;
-    }
-    .other_charges{
-        display: flex;
-        flex-direction: column;
-        input{
-            width: 50px;
-        }
-    }
-</style>
-  <div class="text-center">
-    {% for s in stock %}
-        <div class="stock_box">
-            <div class="category_name">{{s.item_category.name}}</div>
-            <div class="product_name">{{s.item_name_marathi}}</div>
-            <div class="p-2">
-                <div class="flex" style="justify-content: space-evenly;">
-                    <div>{{s.party_name}}</div>
-                    <div style="text-transform: uppercase;">{{s.vehicle_number}}</div>
-                </div>
-                <div class="flex" style="justify-content: space-between;">
-                    <div><b>एकूण</b> - &nbsp;&nbsp;&nbsp;&nbsp; वजन   <b>{{s.weight}}</b></div>
-                    <div>नग   <b>{{s.qty}}</b></div>
-                </div>
-                <div class="flex" style="justify-content: space-between;">
-                    <div><b>विक्री </b> - &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; वजन   <b>{% sell_weight s.weight s.stock_weight %}</b></div>
-                    <div>नग   <b>{% sell_qty s.qty s.stock_qty %}</b></div>
-                </div>
-                <div class="flex" style="justify-content: space-between;">
-                    <div><b>शिल्लक</b> - &nbsp; वजन   <b>{{s.stock_weight}}</b></div>
-                    <div>नग   <b>{{s.stock_qty}}</b></div>
-                </div>
-                <div class="flex">
-                    <div>खरेदी रक्कम<b>&nbsp;{{s.purchase_amount}}</b></div>&nbsp;&nbsp;
-                    <div>विक्री रक्कम<b> &nbsp; {% sell_amount s.purchase_amount s.id as n %}{{n}}</b></div>
-                </div>
-                <div class="flex">
-                    <div>{% profit_loss s.purchase_amount s.vehicle_charges n %}</div>
-                </div>
-                <div class="flex" style="justify-content: space-between;">
-                    <div>Added By - {{s.office_employee.name}}</div>
-                    <div>मोटार भाडे  <b>Rs.{{s.vehicle_charges}}</b></div>
-                    <div>{{s.date}}</div>
-                </div>
-            </div>
-            {% item_stock_summary employee.shope.id s.id %}
+<br>
+<div class="container">
+    {% for i in item %}
+        <div class="item_box">
+            <div><b>{{i.marathi_name}}</b></div>
+            <div>शिल्लक वजन <b>{% stock_item_weight i.id %}</b></div>
         </div>
     {% endfor %}
-  </div>
+    <br>
+    
+    <style>
+        .farmer_box{
+            width: 90%;
+            height: fit-content;
+            margin-top: 10px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid black;
+            gap: 40px;
+            overflow: hidden;
+            .name{
+                border-top-right-radius: 10px;
+                border-top-left-radius: 10px;
+                padding: 5px;
+                background-color: rgb(192, 248, 255);
+            }
+
+        }
+        .farmer_item_box{
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+            padding-top: 1px;
+            background-color: black;
+            gap: 1px;
+            div{
+                background-color: white;
+            }
+            .head{
+                font-weight: 700;
+            }
+        }
+        </style>
+{% for f in farmer %}
+{% order_master_farmer f.id as order_master %}
+<div class="farmer_box" id="farmer_box{{f.id}}" {% if order_master %}{% else %} style="display: none;" {% endif %} >
+    <div class="name">शेतकरी नाव &nbsp; <b> {{f.name}}</b></div>
+        <div class="farmer_item_box">
+
+            <div class="head">नाव</div>
+            <div class="head">खरेदी</div>
+            <div class="head">विक्री</div>
+            <div class="head">शिल्लक</div>
+            <div class="head">status</div>
+        {% for o in order_master %}
+            {% order_detail o.order_filter o.shope_id as order_detail %}
+            {% for d in order_detail %}
+            <div>{{d.item.marathi_name}}</div>
+            <div>{{d.weight}}</div>
+            <div>0</div>
+            <div>{% calculate_remaining_order_detail_weight d.id %}</div>
+            <div><button style="scale: 0.8;" type="submit" class="btn btn-danger btn-sm">close</button></div>
+            {% endfor %}
+
+        {% endfor %}
+        </div>
 </div>
-
-
-
+<br>
+{% endfor %}
+</div>
 {% endblock content %}

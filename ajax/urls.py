@@ -14,4 +14,12 @@ urlpatterns = [
     path('save_phonepe_amount', views.save_phonepe_amount, name='save_phonepe_amount'),
     path('set_vehicle_charges', views.set_vehicle_charges, name='set_vehicle_charges'),
     path('save_discount_amount', views.save_discount_amount, name='save_discount_amount'),
+    path('search_item', views.search_item, name='search_item'),
+    path('delete_purchase_cart_item', views.delete_purchase_cart_item, name='delete_purchase_cart_item'),
+    path('add_to_item_weight_purchase', views.add_to_item_weight_purchase, name='add_to_item_weight_purchase'),
+    path('remove_item_weight_purchase', views.remove_item_weight_purchase, name='remove_item_weight_purchase'),
+    path('calculete_prise_purchase', views.calculete_prise_purchase, name='calculete_prise_purchase'),
+    path('farmer_check', views.farmer_check, name='farmer_check'),
+    path('save_farmer', views.save_farmer, name='save_farmer'),
+    
 ]

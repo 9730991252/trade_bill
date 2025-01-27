@@ -17,6 +17,54 @@ def item_search_by_category(request):
         t = render_to_string('ajax/office/item_search_by_category.html', context)
     return JsonResponse({'t': t})
 
+def search_item(request):
+    if request.method == 'GET':
+        shope_id = request.GET['shope_id']
+        item_name = request.GET['item_name']
+        item = []
+        if item_name:
+            item = Item.objects.filter(Q(english_name__icontains=item_name, shope_id=shope_id))
+        
+        context={
+            'item':item
+        }
+        t = render_to_string('ajax/office/search_item.html', context)
+    return JsonResponse({'t': t})
+
+def delete_purchase_cart_item(request):
+    if request.method == 'GET':
+        cart_id = request.GET['c_id']
+        Purchase_cart.objects.filter(id=cart_id).delete()
+    return JsonResponse({'t': 't'})
+
+def add_to_item_weight_purchase(request):
+    if request.method == 'GET':
+        cart_id = request.GET['cart_id']
+        weight = request.GET['weight']
+        employee_id = request.GET['employee_id']
+        c = Purchase_cart.objects.filter(id=cart_id).first()
+        
+        c.qty += 1
+        c.save()
+        Purchase_item_weight_detail(
+            cart_id=cart_id,
+            weight=weight
+        ).save()
+    t = render_to_string('ajax/office/purchase_bill_ajax.html', {'cart':Purchase_cart.objects.filter(office_employee_id=employee_id), 'employee':office_employee.objects.filter(id=employee_id).first()})
+    return JsonResponse({'t': t})
+
+def remove_item_weight_purchase(request):
+    if request.method == 'GET':
+        item_weight_detail_id = request.GET['item_weight_detail_id']
+        cart_id = request.GET['cart_id']
+        cart = Purchase_cart.objects.filter(id=cart_id).first()
+        c = Purchase_cart.objects.filter(id=cart_id).first()
+        c.qty -= 1
+        c.save()
+        Purchase_item_weight_detail.objects.get(id=item_weight_detail_id).delete()
+    t = render_to_string('ajax/office/purchase_bill_ajax.html', {'cart':Purchase_cart.objects.filter(office_employee_id=cart.office_employee.id), 'employee_id':office_employee.objects.filter(id=cart.office_employee.id).first()})
+    return JsonResponse({'t': t})
+    
 def search_item_by_words(request):
     if request.method == 'GET':
         words = request.GET['words']
@@ -102,6 +150,55 @@ def calculete_prise(request):
     }
     t = render_to_string('ajax/office/add_to_item_weight.html', context)
     return JsonResponse({'t': t})
+
+def calculete_prise_purchase(request):
+    if request.method == 'GET':
+        cart_id = request.GET['cart_id']
+        prise = request.GET['prise']
+        c = Purchase_cart.objects.filter(id=cart_id).first()
+        c.prise = float(prise)
+        c.save()
+    cart = Purchase_cart.objects.filter(id=cart_id).first()
+    context={
+        'cart':Purchase_cart.objects.filter(office_employee_id=cart.office_employee.id),
+        'employee':office_employee.objects.filter(id=cart.office_employee.id).first()
+    }
+    t = render_to_string('ajax/office/purchase_bill_ajax.html', context)
+    return JsonResponse({'t': t})
+
+def farmer_check(request):
+    if request.method == 'GET':
+        c = ''
+        name = request.GET['name']
+        address = request.GET['address']
+        mobile = request.GET['mobile']
+        shope_id = request.GET['shope_id']
+        if 1 < len(name) :
+            c = Farmer.objects.filter(Q(name__icontains=name),shope_id=shope_id)
+        if 1 < len(address) :
+            c = Farmer.objects.filter(Q(address__icontains=address),shope_id=shope_id)
+        if 1 < len(mobile) :
+            c = Farmer.objects.filter(Q(mobile__icontains=name),shope_id=shope_id)
+        context={
+            'c':c[0:3]
+        }
+        t = render_to_string('ajax/office/farmer_check.html', context)
+    return JsonResponse({'t': t})
+
+def save_farmer(request):
+    if request.method == 'GET':
+        name = request.GET['name']
+        address = request.GET['address']
+        mobile = request.GET['mobile']
+        shope_id = request.GET['shope_id']
+        Farmer(
+            name=name,
+            address=address,
+            mobile=mobile,
+            shope_id=shope_id
+        ).save()
+        id = Farmer.objects.filter(shope_id=shope_id).first().id
+    return JsonResponse({'id': id})
 
 def cart_qty(request):
     if request.method == 'GET':

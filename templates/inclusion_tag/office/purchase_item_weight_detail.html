@@ -1,0 +1,46 @@
+<style>
+    .weight_box{
+        display: grid;
+        grid-template-columns: repeat(5, 25px);
+        gap: 5px;
+    }
+    </style>
+    <div class="weight_box">
+    {% for i in i %}
+        <div data-bs-toggle="modal" data-bs-target="#exampleModal{{i.id}}">{{i.weight}},</div>
+      <div class="modal fade" id="exampleModal{{i.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">खात्री करणे बाबत ... </h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                    <b class="text-danger"> {{i.weight}} </b> किलो वजन काढायचे आहे का ? <br><br>
+                    <div class="btn btn-danger" data-bs-dismiss="modal" onclick="remove_item_weight_purchase('{{i.id}}','{{i.weight}}', '{{i.cart_id}}')" >काढून टाका</div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+    </div>
+    
+    
+    <script>
+      function remove_item_weight_purchase(item_weight_detail_id, weight, cart_id){
+        $.ajax({
+              url: "{% url 'remove_item_weight_purchase' %}",
+              method: "GET",
+              data:{
+                item_weight_detail_id:item_weight_detail_id,
+                cart_id:cart_id,
+                    },
+                  success: function(res){
+                      $("#item_weight_result").html(res.t)
+                  }
+          })
+      }
+    </script>
