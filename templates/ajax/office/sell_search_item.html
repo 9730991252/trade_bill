@@ -1,0 +1,21 @@
+{% load office_tag %}
+{% for i in item %}
+<style>
+    .list-group-item{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+</style>
+<form method="POST">
+    <input type="hidden" name="item_id" value="{{i.item.id}}">
+    <button type="submit"  class="list-group-item list-group-item-action" name="add_to_cart" >
+        <div><b>{{i.item.marathi_name}}</b></div>
+        <div style="display: flex;justify-content: space-evenly; gap: 20px;">
+            <div class="text-center">{% check_order_detail_farmer i.id %}</div>
+            <div class="text-center">शिल्लक वजन  {% calculate_remaining_order_detail_weight i.id %}</div>
+        </div>    
+    </button>
+        </form>
+{% endfor %}

@@ -18,13 +18,11 @@
 {% for c in c %}
 <div class="customer_filter">
     <div class="hedder">
-    <div class="filter_name">{{c.name}}</div>
-    <div class="filter_modile">{{c.mobile}}</div>
+    <div class="customer_name">{{c.name}}</div>
+    <div class="customer_modile">{{c.mobile}}</div>
 </div>
-    <div class="fulter_address">{{c.address}}</div>
-    <form method="POST">{% csrf_token %}
+    <div class="customer_address">{{c.address}}</div>
         <input type="hidden" name="customer_id"   value="{{c.id}}">
-        <button name="Select_Customer" class="btn btn-danger btn-sm mt-2">select</button>
-    </form>
+        <button type="button" onclick="select_customer('{{c.id}}','{{c.name}}', '{{c.mobile}}', '{{c.address}}')" class="btn btn-danger btn-sm mt-2">select</button>
 </div>
 {% endfor %}

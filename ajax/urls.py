@@ -1,19 +1,6 @@
 from django.urls import path
 from . import views
 urlpatterns = [
-    path('item_search_by_category', views.item_search_by_category, name='item_search_by_category'),
-    path('customer_check', views.customer_check, name='customer_check'),
-    path('add_to_item_weight', views.add_to_item_weight, name='add_to_item_weight'),
-    path('calculete_prise', views.calculete_prise, name='calculete_prise'),
-    path('cart_qty', views.cart_qty, name='cart_qty'),
-    path('remove_cart_item', views.remove_cart_item, name='remove_cart_item'),
-    path('remove_item_weight', views.remove_item_weight, name='remove_item_weight'),
-    path('search_item_by_words', views.search_item_by_words, name='search_item_by_words'),
-    path('set_purchase_amount', views.set_purchase_amount, name='set_purchase_amount'),
-    path('save_cash_amount', views.save_cash_amount, name='save_cash_amount'),
-    path('save_phonepe_amount', views.save_phonepe_amount, name='save_phonepe_amount'),
-    path('set_vehicle_charges', views.set_vehicle_charges, name='set_vehicle_charges'),
-    path('save_discount_amount', views.save_discount_amount, name='save_discount_amount'),
     path('search_item', views.search_item, name='search_item'),
     path('delete_purchase_cart_item', views.delete_purchase_cart_item, name='delete_purchase_cart_item'),
     path('add_to_item_weight_purchase', views.add_to_item_weight_purchase, name='add_to_item_weight_purchase'),
@@ -21,5 +8,10 @@ urlpatterns = [
     path('calculete_prise_purchase', views.calculete_prise_purchase, name='calculete_prise_purchase'),
     path('farmer_check', views.farmer_check, name='farmer_check'),
     path('save_farmer', views.save_farmer, name='save_farmer'),
-    
+    path('sell_search_item', views.sell_search_item, name='sell_search_item'),
+    path('add_to_item_weight_sell', views.add_to_item_weight_sell, name='add_to_item_weight_sell'),
+    path('calculete_prise_sell', views.calculete_prise_sell, name='calculete_prise_sell'),
+    path('remove_item_weight_sell', views.remove_item_weight_sell, name='remove_item_weight_sell'),
+    path('customer_check', views.customer_check, name='customer_check'),
+    path('save_customer', views.save_customer, name='save_customer'),
 ]

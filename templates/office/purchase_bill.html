@@ -171,15 +171,15 @@
                 <div class="other_charges_box" >
                     <div class="other_charges">
                         <div class="lable">हमाली</div>
-                        <div class="containt"> <input type="number" value="0" class="check_zero1" name="hamali" id="हमाली" oninput="total_amount_calculate('{{total_item_amount}}'),check_zero('हमाली')"  required> </div>
+                        <div class="containt"> <input type="number" value="" class="check_zero1" name="hamali" id="हमाली" oninput="total_amount_calculate('{{total_item_amount}}'),check_zero('हमाली')"  required> </div>
                     </div>
                     <div class="other_charges">
                         <div class="lable">तोलाई</div>
-                        <div class="containt"> <input type="number" value="0" class="check_zero2" name="tolai" id="तोलाई" oninput="total_amount_calculate('{{total_item_amount}}'),check_zero('तोलाई')" required> </div>
+                        <div class="containt"> <input type="number" value="" class="check_zero2" name="tolai" id="तोलाई" oninput="total_amount_calculate('{{total_item_amount}}'),check_zero('तोलाई')" required> </div>
                     </div>
                     <div class="other_charges">
                 <div class="lable">आडत</div>
-                <div class="containt"> <input type="number" name="aadat" value="0" class="check_zero3" id="आडत" oninput="total_amount_calculate('{{total_item_amount}}'),check_zero('आडत')"  required> </div>
+                <div class="containt"> <input type="number" name="aadat" value="" class="check_zero3" id="आडत" oninput="total_amount_calculate('{{total_item_amount}}'),check_zero('आडत')"  required> </div>
             </div>
             <div class="other_charges">
                 <div class="lable">शेअर्स</div>
@@ -198,11 +198,11 @@
         
         <div class="customer_detail">
             <input type="hidden" name="farmer_id" id="farmer_id">
-            <div class="customer_name"><input  oninput="farmer_check()" id="customer_name" value="" name="name" type="text" class="form-control" placeholder="नाव" ></div>
-                <input oninput="farmer_check()" id="customer_add" name="address" type="text" value="" class="form-control mt-2" placeholder="पत्ता" >
+            <div class="customer_name"><input  oninput="farmer_check()" id="customer_name" value="" name="name" type="text" class="form-control" placeholder="नाव" required></div>
+                <input oninput="farmer_check()" id="customer_add" name="address" type="text" value="" class="form-control mt-2" placeholder="पत्ता" required>
 
                 <div class="flex">
-                    <div><input oninput="farmer_check(), check_number()" id="customer_mobile" value="" name="mobile" type="text" class="form-control mt-2" placeholder="मोबाइल नंबर " ></div>
+                    <div><input oninput="farmer_check(), check_number()" id="customer_mobile" value="" name="mobile" type="text" class="form-control mt-2" placeholder="मोबाइल नंबर " required></div>
                     <div id="add_customer_btn"><button onclick="save_farmer()" class="btn btn-primary mt-2" name="add_customer">जतन करा</button></div>
                     <div id="cancel_farmer" style="display: none;"><button onclick="cancel_farmer()" class="btn text-danger">X</button></div>
                 </div>
@@ -292,6 +292,12 @@ function farmer_check(){
                 },
                     success: function(res){
                         $("#farmer_result").html(res.t)
+                        if (Number(res.add_btn_status) == 0){
+                            document.getElementById('add_customer_btn').innerHTML = `<div class='alert alert-danger'>मोबाइल नंबर वापरलेला आहे </div> `
+                        }
+                        if (Number(res.add_btn_status) == '1'){
+                            document.getElementById('add_customer_btn').innerHTML = `<button onclick="save_farmer()" class="btn btn-primary mt-2" name="add_customer">जतन करा</button>`
+                        }
                     }
             })
         }
@@ -357,7 +363,7 @@ function check_weight_greter(stock_weight, c_id){
     }
 }
 function total_amount_calculate(old_amount){
-    new_amount = Number(old_amount) +
+    new_amount = Number(old_amount) -
              (
                 Number(document.getElementById('हमाली').value) + 
                 Number(document.getElementById('तोलाई').value) + 
@@ -413,23 +419,6 @@ function calculete_prise(weight, c_id){
         prise = document.getElementById('prise'+c_id).value = '';
         alert('कृपया वजन टाका ')
     }
-}
-function cart_qty(c_id){
-    cart_qty_input = document.getElementById('cart_qty'+c_id).value
-    if( cart_qty_input < 0){
-        cart_qty_input = document.getElementById('cart_qty'+c_id).value = 0
-    }
-    $.ajax({
-            url: "{% url 'cart_qty' %}",
-            method: "GET",
-            data:{
-                cart_id:c_id,
-                cart_qty_input:cart_qty_input
-                  },
-                success: function(res){
-                    $("#item_weight_result").html(res.t)
-                }
-        })
 }
 </script>
 

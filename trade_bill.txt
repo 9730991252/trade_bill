@@ -1,4 +1,4 @@
-139.59.31.88
+103.150.136.82
 _______________________________________
 
 cd trade_bill
@@ -6,14 +6,14 @@ git pull
 source venv/bin/activate
 python3 manage.py makemigrations
 python3 manage.py migrate
-sudo systemctl daemon-reload
-sudo systemctl restart trade_bill.com.gunicorn
+systemctl daemon-reload
+systemctl restart trade_bill.com.gunicorn
 exit
 
 cd trade_bill
 git pull
-sudo systemctl daemon-reload
-sudo systemctl restart trade_bill.com.gunicorn
+systemctl daemon-reload
+systemctl restart trade_bill.com.gunicorn
 exit
 
 _______________________________________
@@ -57,11 +57,11 @@ deactivate
 
 ************ Create System Socket File for Gunicorn *******
 
-Example:- sudo nano /etc/systemd/system/crenta.in.gunicorn.socket
+Example:- nano /etc/systemd/system/crenta.in.gunicorn.socket
 
 cd  /etc/systemd/system/
 
-sudo nano trade_bill.com.gunicorn.socket
+nano trade_bill.com.gunicorn.socket
 
 
 
@@ -76,12 +76,12 @@ WantedBy=sockets.target
 
 
 ************** Create System Service File for Gunicorn ******
-Syntax:- sudo nano /etc/systemd/system/your_domain.gunicorn.service
-Example:- sudo nano /etc/systemd/system/narayaniorder.com.gunicorn.service
+Syntax:- nano /etc/systemd/system/your_domain.gunicorn.service
+Example:- nano /etc/systemd/system/narayaniorder.com.gunicorn.service
 
 cd  /etc/systemd/system/
 
-sudo nano trade_bill.com.gunicorn.service
+nano trade_bill.com.gunicorn.service
 
 
 [Unit]
@@ -103,28 +103,28 @@ ExecStart=/root/trade_bill/venv/bin/gunicorn \
 WantedBy=multi-user.target
 
 ----------------------------------------------------------------
-sudo systemctl start trade_bill.com.gunicorn.socket
+systemctl start trade_bill.com.gunicorn.socket
 
-sudo systemctl start trade_bill.com.gunicorn.service
+systemctl start trade_bill.com.gunicorn.service
 
 
 -----------------------------------------------------------------
 
-sudo systemctl enable trade_bill.com.gunicorn.socket
+systemctl enable trade_bill.com.gunicorn.socket
 
-sudo systemctl enable trade_bill.com.gunicorn.service
+systemctl enable trade_bill.com.gunicorn.service
 
 
 -----------------------------------------------------------------------
 
-sudo systemctl status trade_bill.com.gunicorn.socket
+systemctl status trade_bill.com.gunicorn.socket
 
-sudo systemctl status trade_bill.com.gunicorn.service
+systemctl status trade_bill.com.gunicorn.service
 
 -------------------------------------------
 
-sudo systemctl daemon-reload
-sudo systemctl restart trade_bill.com.gunicorn
+systemctl daemon-reload
+systemctl restart trade_bill.com.gunicorn
 
 
 
@@ -133,13 +133,13 @@ sudo systemctl restart trade_bill.com.gunicorn
 
 
 ****************** Create Virtual Host File ******
-Syntax:- sudo nano /etc/nginx/sites-available/your_domain
-Example:- sudo nano /etc/nginx/sites-available/crenta.in
+Syntax:- nano /etc/nginx/sites-available/your_domain
+Example:- nano /etc/nginx/sites-available/crenta.in
 
 
 cd /etc/nginx/sites-available
 
-sudo nano trade_bill.com
+nano trade_bill.com
 
 
 
@@ -166,26 +166,26 @@ server{
 
 ########## Enable Virtual Host or Create Symbolic Link of Virtual Host File ########
 
-sudo ln -s /etc/nginx/sites-available/trade_bill.com /etc/nginx/sites-enabled/trade_bill.com
+ln -s /etc/nginx/sites-available/trade_bill.com /etc/nginx/sites-enabled/trade_bill.com
 
 
 %%%%%%%%%%%%%%%%%%%%% Check Configuration is Correct or Not %%%%%
 
-sudo nginx -t
+nginx -t
 
 %%%%%%%%%%%% Restart Nginx %%%%%%%%%
 
-sudo service nginx restart
+service nginx restart
 
 
 ********** restart ******
 
-sudo systemctl daemon-reload
-sudo systemctl restart trade_bill.com.gunicorn
+systemctl daemon-reload
+systemctl restart trade_bill.com.gunicorn
 
 
 --------------------------------------- ssl ------------------
 
-sudo certbot --nginx
+certbot --nginx
 
-sudo certbot --nginx -d janmanasnews.com -d www.janmanasnews.com
+certbot --nginx -d janmanasnews.com -d www.janmanasnews.com

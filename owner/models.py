@@ -58,10 +58,17 @@ class Purchase_order_detail(models.Model):
     ordered_date = models.DateTimeField(auto_now_add=True,null=True)
     stock_status = models.IntegerField(default=1)
 
+class Customer(models.Model):
+    shope = models.ForeignKey(Shope,on_delete=models.PROTECT,null=True)
+    office_employee = models.ForeignKey(office_employee,on_delete=models.PROTECT,null=True)
+    name = models.CharField(max_length=100)
+    address = models.CharField(max_length=200 , null=True)
+    mobile = models.IntegerField()
+    
 class Sell_order_master(models.Model):
     shope = models.ForeignKey(Shope,on_delete=models.PROTECT,null=True)
     office_employee = models.ForeignKey(office_employee,on_delete=models.PROTECT,null=True)
-    farmer = models.ForeignKey(Farmer,on_delete=models.PROTECT,default=True, null=True)
+    customer = models.ForeignKey(Customer,on_delete=models.PROTECT,default=True, null=True)
     hamali  = models.FloatField()
     tolai  = models.FloatField()
     aadat  = models.FloatField()
@@ -78,6 +85,7 @@ class Sell_order_detail(models.Model):
     order_master = models.ForeignKey(Sell_order_master,on_delete=models.PROTECT,null=True)
     office_employee = models.ForeignKey(office_employee,on_delete=models.PROTECT,null=True)
     item = models.ForeignKey(Item,on_delete=models.PROTECT,default=True, null=True)
+    order_master = models.ForeignKey(Sell_order_master,on_delete=models.PROTECT,null=True)
     prise=models.FloatField(default=0)
     qty = models.IntegerField(default=1) 
     order_filter=models.IntegerField(default=True)
@@ -102,3 +110,4 @@ class Purchase_item_weight_detail(models.Model):
     cart_id = models.CharField(max_length=100,null=True)
     weight = models.IntegerField()
     Order_detail = models.ForeignKey(Purchase_order_detail,on_delete=models.PROTECT,null=True)
+    

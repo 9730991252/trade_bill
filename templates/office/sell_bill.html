@@ -47,10 +47,10 @@
     }
     .main_head{
         border-bottom: 1px solid black;
-        background-color: rgb(215, 255, 255);
+        background-color: rgb(255, 234, 215);
     }
     .cart_item_name_box{
-        background-color: rgb(215, 255, 255);
+        background-color: rgb(255, 234, 215);
         border-top: 1px solid black;
         display: flex;
         justify-content: space-evenly;
@@ -98,11 +98,11 @@
 
 
 
-                {% total_item_amount_purchase employee.id as total_item_amount %}
+                {% total_item_amount_sell employee.id as total_item_amount %}
                 {% for c in cart %}
                 <br>
                 <div class="cart_item_main_box">
-                    {% item_weight_detail_sum_purchase c.id as n %}
+                    {% item_weight_detail_sum_sell c.id as n %}
                     {% if n or c.qty %}{% else %}<div class="remove_cart_item_box" data-bs-toggle="modal" data-bs-target="#exampleModal123{{c.id}}" >X</div>{% endif %}
                     <div class="cart_item_name_box">
                         <b>{{c.item.marathi_name}}</b>
@@ -113,7 +113,7 @@
                     <div class="main_head">वजन</div>
                     <div class="main_head">दर</div>
                     <div class="main_head">रक्कम</div>
-                    <div class="main_containt" id="item_weight{{c.id}}">{% purchase_item_weight_detail c.id %}</div>
+                    <div class="main_containt" id="item_weight{{c.id}}">{% sell_item_weight_detail c.id %}</div>
                     <div class="main_containt"><input type="number" oninput="check_zero('cart_qty{{c.id}}'),check_input_show_btn_for_prise_and_qty('{% if c.qty == 0 %}{% else %}{{c.qty}}{% endif %}' ,'cart_qty', 'qty_btn', '{{c.id}}'),check_stock_qty('{{c.item.stock_qty}}', '{{c.id}}', '{{c.qty}}')" value="{% if c.qty == 0 %}{% else %}{{c.qty}}{% endif %}" id="cart_qty{{c.id}}" style="width: 40px;" required><br><p class="mb-0"><i style="display: none;" onclick="cart_qty('{{c.id}}')" id="qty_btn{{c.id}}" class="fa-solid fa-check"></i></p></div>
                     <div class="main_containt"> <input type="text" value="{% if n == 0 %}{% else %}{{n}}{% endif %}" style="width: 40px;" required readonly="readonly"></div>
                     <div class="main_containt"  ><input step="any" value="{% if c.prise == 0 %}{% else %}{{c.prise | floatformat:2}}{% endif %}" type="number" id="prise{{c.id}}" oninput="check_zero('prise{{c.id}}'),check_input_show_btn_for_prise_and_qty('{% if c.prise == 0 %}{% else %}{{c.prise | floatformat:2}}{% endif %}' ,'prise', 'prise_btn', '{{c.id}}')"  style="width: 40px;" required><br><p class="mb-0"><i style="display: none;" id="prise_btn{{c.id}}" onclick="calculete_prise('{{n}}','{{c.id}}'),total_amount_calculate('{{total_item_amount}}')" class="fa-solid fa-check"></i></p></div>
@@ -171,15 +171,15 @@
                 <div class="other_charges_box" >
                     <div class="other_charges">
                         <div class="lable">हमाली</div>
-                        <div class="containt"> <input type="number" value="0" class="check_zero1" name="hamali" id="हमाली" oninput="total_amount_calculate('{{total_item_amount}}'),check_zero('हमाली')"  required> </div>
+                        <div class="containt"> <input type="number" value="" class="check_zero1" name="hamali" id="हमाली" oninput="total_amount_calculate('{{total_item_amount}}'),check_zero('हमाली')"  required> </div>
                     </div>
                     <div class="other_charges">
                         <div class="lable">तोलाई</div>
-                        <div class="containt"> <input type="number" value="0" class="check_zero2" name="tolai" id="तोलाई" oninput="total_amount_calculate('{{total_item_amount}}'),check_zero('तोलाई')" required> </div>
+                        <div class="containt"> <input type="number" value="" class="check_zero2" name="tolai" id="तोलाई" oninput="total_amount_calculate('{{total_item_amount}}'),check_zero('तोलाई')" required> </div>
                     </div>
                     <div class="other_charges">
                 <div class="lable">आडत</div>
-                <div class="containt"> <input type="number" name="aadat" value="0" class="check_zero3" id="आडत" oninput="total_amount_calculate('{{total_item_amount}}'),check_zero('आडत')"  required> </div>
+                <div class="containt"> <input type="number" name="aadat" value="" class="check_zero3" id="आडत" oninput="total_amount_calculate('{{total_item_amount}}'),check_zero('आडत')"  required> </div>
             </div>
             <div class="other_charges">
                 <div class="lable">शेअर्स</div>
@@ -197,17 +197,17 @@
         </div>
         
         <div class="customer_detail">
-            <input type="hidden" name="farmer_id" id="farmer_id">
-            <div class="customer_name"><input  oninput="farmer_check()" id="customer_name" value="" name="name" type="text" class="form-control" placeholder="नाव" ></div>
-                <input oninput="farmer_check()" id="customer_add" name="address" type="text" value="" class="form-control mt-2" placeholder="पत्ता" >
+            <input type="hidden" name="customer_id" id="customer_id">
+            <div class="customer_name"><input  oninput="customer_check()" id="customer_name" value="" name="name" type="text" class="form-control" placeholder="नाव" required></div>
+                <input oninput="customer_check()" id="customer_add" name="address" type="text" value="" class="form-control mt-2" placeholder="पत्ता" required>
 
                 <div class="flex">
-                    <div><input oninput="farmer_check(), check_number()" id="customer_mobile" value="" name="mobile" type="text" class="form-control mt-2" placeholder="मोबाइल नंबर " ></div>
-                    <div id="add_customer_btn"><button onclick="save_farmer()" class="btn btn-primary mt-2" name="add_customer">जतन करा</button></div>
-                    <div id="cancel_farmer" style="display: none;"><button onclick="cancel_farmer()" class="btn text-danger">X</button></div>
+                    <div><input oninput="customer_check(), check_number()" id="customer_mobile" value="" name="mobile" type="text" class="form-control mt-2" placeholder="मोबाइल नंबर " required></div>
+                    <div id="add_customer_btn"><button onclick="save_customer()" class="btn btn-primary mt-2" name="add_customer">जतन करा</button></div>
+                    <div id="cancel_customer" style="display: none;"><button onclick="cancel_customer()" class="btn text-danger">X</button></div>
                 </div>
         </div>
-        <div id="farmer_result"></div>
+        <div id="customer_result"></div>
 
         <button type="submit"  class="btn btn-danger mb-2 mt-2" name="complete_bill">बिल पूर्ण करा</button>
     </div>
@@ -231,27 +231,27 @@
 
 <script>
 
-function cancel_farmer(){
-    document.getElementById('farmer_id').value = '';
+function cancel_customer(){
+    document.getElementById('customer_id').value = '';
     document.getElementById('customer_name').value = '';
     document.getElementById('customer_mobile').value = '';
     document.getElementById('customer_add').value = '';
-    document.getElementById('farmer_result').innerHTML = '';
+    document.getElementById('customer_result').innerHTML = '';
     document.getElementById('add_customer_btn').style.display = 'flex';
-    document.getElementById('cancel_farmer').style.display = 'none';
+    document.getElementById('cancel_customer').style.display = 'none';
 }
 
-function select_farmer(id, name, mobile, address){
-    document.getElementById('farmer_id').value = id;
+function select_customer(id, name, mobile, address){
+    document.getElementById('customer_id').value = id;
     document.getElementById('customer_name').value = name;
     document.getElementById('customer_mobile').value = mobile;
     document.getElementById('customer_add').value = address;
-    document.getElementById('farmer_result').innerHTML = '';
+    document.getElementById('customer_result').innerHTML = '';
     document.getElementById('add_customer_btn').style.display = 'none';
-    document.getElementById('cancel_farmer').style.display = 'flex';
+    document.getElementById('cancel_customer').style.display = 'flex';
 }
 
-function save_farmer(){
+function save_customer(){
     name = document.getElementById('customer_name').value;
     address = document.getElementById('customer_add').value;
     mobile = document.getElementById('customer_mobile').value;
@@ -260,7 +260,7 @@ function save_farmer(){
     }
     else{
     $.ajax({
-        url: "{% url 'save_farmer' %}",
+        url: "{% url 'save_customer' %}",
         method: "GET",
         data:{
             name:name,
@@ -270,19 +270,19 @@ function save_farmer(){
         },
         success: function(res){
             document.getElementById('add_customer_btn').style.display = 'none';
-            document.getElementById('cancel_farmer').style.display = 'flex';
-            document.getElementById('farmer_id').value = res.id
+            document.getElementById('cancel_customer').style.display = 'flex';
+            document.getElementById('customer_id').value = res.id
         }
     })
 }
 }
 
-function farmer_check(){
+function customer_check(){
     name = document.getElementById('customer_name').value;
     address = document.getElementById('customer_add').value;
     mobile = document.getElementById('customer_mobile').value;
     $.ajax({
-        url: "{% url 'farmer_check' %}",
+        url: "{% url 'customer_check' %}",
         method: "GET",
         data:{
             name:name,
@@ -291,7 +291,13 @@ function farmer_check(){
                     shope_id:'{{employee.shope.id}}'
                 },
                     success: function(res){
-                        $("#farmer_result").html(res.t)
+                        $("#customer_result").html(res.t)
+                        if (Number(res.add_btn_status) == 0){
+                            document.getElementById('add_customer_btn').innerHTML = `<div class='alert alert-danger'>मोबाइल नंबर वापरलेला आहे </div> `
+                        }
+                        if (Number(res.add_btn_status) == '1'){
+                            document.getElementById('add_customer_btn').innerHTML = `<button onclick="save_customer()" class="btn btn-primary mt-2" name="add_customer">जतन करा</button>`
+                        }
                     }
             })
         }
@@ -357,7 +363,7 @@ function check_weight_greter(stock_weight, c_id){
     }
 }
 function total_amount_calculate(old_amount){
-    new_amount = Number(old_amount) +
+    new_amount = Number(old_amount) -
              (
                 Number(document.getElementById('हमाली').value) + 
                 Number(document.getElementById('तोलाई').value) + 
@@ -374,7 +380,7 @@ function total_amount_calculate(old_amount){
 
 function add_to_item_weight(c_id,item_id){
     $.ajax({
-            url: "{% url 'add_to_item_weight_purchase' %}",
+            url: "{% url 'add_to_item_weight_sell' %}",
             method: "GET",
             data:{
                 cart_id:c_id,
@@ -398,7 +404,7 @@ function calculete_prise(weight, c_id){
         amount = prise * weight
         document.getElementById('set_amount_div'+c_id).innerHTML = amount;
         $.ajax({
-            url: "{% url 'calculete_prise_purchase' %}",
+            url: "{% url 'calculete_prise_sell' %}",
             method: "GET",
             data:{
                 cart_id:c_id,
@@ -414,23 +420,7 @@ function calculete_prise(weight, c_id){
         alert('कृपया वजन टाका ')
     }
 }
-function cart_qty(c_id){
-    cart_qty_input = document.getElementById('cart_qty'+c_id).value
-    if( cart_qty_input < 0){
-        cart_qty_input = document.getElementById('cart_qty'+c_id).value = 0
-    }
-    $.ajax({
-            url: "{% url 'cart_qty' %}",
-            method: "GET",
-            data:{
-                cart_id:c_id,
-                cart_qty_input:cart_qty_input
-                  },
-                success: function(res){
-                    $("#item_weight_result").html(res.t)
-                }
-        })
-}
+
 </script>
 
 <!--//-------------------------------------------------------------------------- -->
@@ -443,7 +433,7 @@ function search_item(item_name){
     }
     $.ajax({
         type: 'GET',
-        url: '{% url "search_item" %}',
+        url: '{% url "sell_search_item" %}',
         data: data,
         success: function(response){
             document.getElementById('item_result').innerHTML = response.t
