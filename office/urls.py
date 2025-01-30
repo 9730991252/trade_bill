@@ -10,5 +10,8 @@ urlpatterns = [
     path('genereate_purchase_bill_image/<int:order_filter>', views.genereate_purchase_bill_image, name='genereate_purchase_bill_image'),
     path('completed_view_sell_bill/<int:order_filter>', views.completed_view_sell_bill, name='completed_view_sell_bill'),
     path('sell_bill/', views.sell_bill, name='sell_bill'),
-    path('sell_completed_bills/', views.sell_completed_bills, name='sell_completed_bills')
+    path('sell_completed_bills/', views.sell_completed_bills, name='sell_completed_bills'),
+    path('genereate_sell_bill_image/<int:order_filter>', views.genereate_sell_bill_image, name='genereate_sell_bill_image'),
+    path('pay_purchase_bill/<int:farmer_id>', views.pay_purchase_bill, name='pay_purchase_bill'),
+    path('pay_sell_bill/<int:customer_id>', views.pay_sell_bill, name='pay_sell_bill'),
 ]

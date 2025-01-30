@@ -45,6 +45,7 @@ class Purchase_order_master(models.Model):
     order_filter=models.IntegerField(default=True)
     date=models.DateField(auto_now_add=True,null=True)
     ordered_date = models.DateTimeField(auto_now_add=True,null=True)
+    paid_status = models.IntegerField(default=0)
     
 class Purchase_order_detail(models.Model):
     shope = models.ForeignKey(Shope,on_delete=models.PROTECT,null=True)
@@ -79,6 +80,8 @@ class Sell_order_master(models.Model):
     order_filter=models.IntegerField(default=True)
     date=models.DateField(auto_now_add=True,null=True)
     ordered_date = models.DateTimeField(auto_now_add=True,null=True)
+    paid_status = models.IntegerField(default=0)
+    
     
 class Sell_order_detail(models.Model):
     shope = models.ForeignKey(Shope,on_delete=models.PROTECT,null=True)
@@ -111,3 +114,24 @@ class Purchase_item_weight_detail(models.Model):
     weight = models.IntegerField()
     Order_detail = models.ForeignKey(Purchase_order_detail,on_delete=models.PROTECT,null=True)
     
+class Farmer_purchase_payment_transaction(models.Model):
+    farmer = models.ForeignKey(Farmer, on_delete=models.PROTECT, null=True)
+    shope = models.ForeignKey(Shope,on_delete=models.PROTECT,null=True)
+    office_employee = models.ForeignKey(office_employee,on_delete=models.PROTECT,null=True)
+    amount = models.FloatField()
+    bank_number = models.IntegerField(null=True)
+    phonepe_number = models.IntegerField(null=True)
+    payment_type = models.CharField(max_length=100)
+    date = models.DateField()
+    added_date = models.DateTimeField(auto_now_add=True)
+    
+class Customer_sell_payment_transaction(models.Model):
+    customer = models.ForeignKey(Customer, on_delete=models.PROTECT, null=True)
+    shope = models.ForeignKey(Shope,on_delete=models.PROTECT,null=True)
+    office_employee = models.ForeignKey(office_employee,on_delete=models.PROTECT,null=True)
+    amount = models.FloatField()
+    bank_number = models.IntegerField(null=True)
+    phonepe_number = models.IntegerField(null=True)
+    payment_type = models.CharField(max_length=100)
+    date = models.DateField()
+    added_date = models.DateTimeField(auto_now_add=True)

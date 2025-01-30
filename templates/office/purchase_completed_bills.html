@@ -48,7 +48,7 @@
                 <div class="office_employee m-2">By - {{o.office_employee.name}}</div>
                 <div class="flex">
                     <a href="/office/completed_view_purchase_bill/{{o.order_filter}}" class="btn btn-success">View</a>
-                    <a href="" class="btn btn-danger">Pay</a>
+                    <a href="/office/pay_purchase_bill/{{o.farmer.id}}" class="btn btn-danger">Pay</a>
                 </div>
                 {% else %}
                 <div class="office_employee m-2">By - {{o.office_employee.name}}</div>

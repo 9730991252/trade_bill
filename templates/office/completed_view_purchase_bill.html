@@ -105,7 +105,7 @@ a{
         
     }
     .hide{
-        display: none;
+        display: none !important;
     }
     .date{
         font-size: 12px;
@@ -138,13 +138,14 @@ a{
 <div class="bill_box">
     <div class="header">
         <div class="bill_main_header">
+            <div class="text-center">खरेदी बिल</div>
             <div class="shope_name"><b>{{order_master.shope.shope_name}}</b></div>
             <div class="description"><p>{{order_master.shope.description}}</p></div>
             <div class="address">{{order_master.shope.address}}</div>
             <div class="contact_details">{{order_master.shope.contact_details}}</div>
         </div>
         <div class="bill_number_box">
-            <div class="bill_number">बिल नंबर - {{order_master.order_filter}}</div>
+            <div class="bill_number">खरेदी बिल {{order_master.order_filter}}</div>
             <div class="date">दिनांक  - {{order_master.ordered_date}}</div>
         </div>
         

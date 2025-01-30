@@ -21,6 +21,217 @@ def office_home(request):
     else:
         return redirect('/')
     
+def genereate_sell_bill_image(request, order_filter):
+    if request.session.has_key('office_mobile'):
+        mobile = request.session['office_mobile']
+        e = office_employee.objects.filter(mobile=mobile, status=1).first()
+        om = Sell_order_master.objects.filter(shope_id=e.shope_id, order_filter=order_filter).first()
+        context = {
+            'employee': e,
+            'order_master': om,
+            'order_detail': Sell_order_detail.objects.filter(shope_id=e.shope_id, order_filter=order_filter),
+        }
+        return render(request, 'office/genereate_sell_bill_image.html', context)
+    else:
+        return redirect('/')
+    
+    
+@csrf_exempt
+def pay_sell_bill(request, customer_id):
+    if request.session.has_key('office_mobile'):
+        mobile = request.session['office_mobile']
+        e = office_employee.objects.filter(mobile=mobile, status=1).first()
+        if e:
+            remening_amount = change_sell_farmer_bill_paid_status(customer_id)
+
+            if 'cash' in request.POST:
+                date = request.POST.get('date')
+                amount = request.POST.get('cash_amount')
+                Pay_cash_amount_sell(e.shope.id,customer_id,date,amount)
+                return redirect('pay_sell_bill', customer_id=customer_id)
+            
+            if 'phone_pe' in request.POST:
+                date = request.POST.get('date')
+                amount = request.POST.get('phone_pe_amount')
+                phonepe_number = request.POST.get('phone_pe_number')
+                Pay_phone_pe_amount_sell(e.shope.id,customer_id,date,amount,phonepe_number)
+                return redirect('pay_sell_bill', customer_id=customer_id)
+            
+            if 'bank' in request.POST:
+                date = request.POST.get('date')
+                amount = request.POST.get('bank_amount')
+                bank_name = request.POST.get('bank_name')
+                bank_number = request.POST.get('bank_number')
+                Pay_bank_amount_sell(e.shope.id,customer_id,date,amount,bank_number)
+                return redirect('pay_sell_bill', customer_id=customer_id)
+            
+            pending_amount = Sell_order_master.objects.filter(customer_id=customer_id).aggregate(Sum('total'))['total__sum']
+            if pending_amount == None:
+                pending_amount = 0
+            paid_total_amount = Customer_sell_payment_transaction.objects.filter(customer_id=customer_id).aggregate(Sum('amount'))['amount__sum']
+            if paid_total_amount == None:
+                paid_total_amount = 0
+        context = {
+            'employee': e,
+            'customer':Customer.objects.filter(id=customer_id).first(),
+            'bill':Sell_order_master.objects.filter(customer_id=customer_id),
+            'remening_amount':remening_amount,
+            'transaction':Customer_sell_payment_transaction.objects.filter(customer_id=customer_id).order_by('-date'),
+            'paid_total_amount':paid_total_amount,
+            'final_amount':(int(pending_amount) -  int(paid_total_amount)),
+            'bill_total_amount':pending_amount,
+        }
+        return render(request, 'office/pay_sell_bill.html', context)
+    else:
+        return redirect('/')
+    
+def Pay_bank_amount_sell(shope_id, customer_id, date, amount, bank_number):
+    Customer_sell_payment_transaction(
+        shope_id=shope_id,
+        customer_id=customer_id,
+        date=date,
+        amount=amount,
+        bank_number=bank_number,
+        payment_type='bank',
+    ).save()
+    
+def Pay_phone_pe_amount_sell(shope_id, customer_id, date, amount, phonepe_number):
+    Customer_sell_payment_transaction(
+        shope_id=shope_id,
+        customer_id=customer_id,
+        date=date,
+        amount=amount,
+        phonepe_number=phonepe_number,
+        payment_type='phonepe',
+    ).save()
+    
+def Pay_cash_amount_sell(shope_id, customer_id, date, amount):
+    Customer_sell_payment_transaction(
+        shope_id=shope_id,
+        customer_id=customer_id,
+        date=date,
+        amount=amount,
+        payment_type='cash',
+    ).save()
+    
+def change_sell_farmer_bill_paid_status(customer_id):
+    recived_payment = Customer_sell_payment_transaction.objects.filter(customer_id=customer_id).aggregate(Sum('amount'))['amount__sum']
+    if recived_payment == None:
+        recived_payment = 0
+    paid_bill_amount = Sell_order_master.objects.filter(customer_id=customer_id, paid_status = 1).aggregate(Sum('total'))['total__sum']
+    if paid_bill_amount == None:
+        paid_bill_amount = 0
+    remening_amount = (int(recived_payment) - int(paid_bill_amount))
+    bill = Sell_order_master.objects.filter(customer_id=customer_id, paid_status=0).order_by('-id')
+    
+    bill_id = 0
+    for b in bill:
+        if remening_amount >= b.total:
+            b.paid_status = 1
+            b.save()
+            remening_amount -= b.total
+        else:
+            bill_id = b.id
+            if int(remening_amount) != 0:
+                remening_amount = int(b.total) - int(remening_amount)
+            break
+    return {'bill_id':bill_id, 'remening_amount':remening_amount}
+@csrf_exempt
+def pay_purchase_bill(request, farmer_id):
+    if request.session.has_key('office_mobile'):
+        mobile = request.session['office_mobile']
+        e = office_employee.objects.filter(mobile=mobile, status=1).first()
+        if e:
+            remening_amount = change_purchase_farmer_bill_paid_status(farmer_id)
+            if 'cash' in request.POST:
+                date = request.POST.get('date')
+                amount = request.POST.get('cash_amount')
+                Pay_cash_amount_purchase(e.shope.id,farmer_id,date,amount)
+                return redirect('pay_purchase_bill', farmer_id=farmer_id)
+            if 'phone_pe' in request.POST:
+                date = request.POST.get('date')
+                amount = request.POST.get('phone_pe_amount')
+                phonepe_number = request.POST.get('phone_pe_number')
+                Pay_phone_pe_amount_purchase(e.shope.id,farmer_id,date,amount,phonepe_number)
+                return redirect('pay_purchase_bill', farmer_id=farmer_id)
+            if 'bank' in request.POST:
+                date = request.POST.get('date')
+                amount = request.POST.get('bank_amount')
+                bank_number = request.POST.get('bank_number')
+                Pay_bank_amount_purchase(e.shope.id,farmer_id,date,amount,bank_number)
+                return redirect('pay_purchase_bill', farmer_id=farmer_id)
+            pending_amount = Purchase_order_master.objects.filter(farmer_id=farmer_id).aggregate(Sum('total'))['total__sum']
+            if pending_amount == None:
+                pending_amount = 0
+            paid_total_amount = Farmer_purchase_payment_transaction.objects.filter(farmer_id=farmer_id).aggregate(Sum('amount'))['amount__sum']
+            if paid_total_amount == None:
+                paid_total_amount = 0
+        context = {
+            'employee': e,
+            'farmer':Farmer.objects.filter(id=farmer_id).first(),
+            'transaction':Farmer_purchase_payment_transaction.objects.filter(farmer_id=farmer_id).order_by('-date'),
+            'paid_total_amount':paid_total_amount,
+            'bill':Purchase_order_master.objects.filter(farmer_id=farmer_id),
+            'remening_amount':remening_amount,
+            'final_amount':(int(pending_amount) -  int(paid_total_amount)),
+            'bill_total_amount':pending_amount,
+        }
+        return render(request, 'office/pay_purchase_bill.html', context)
+    else:
+        return redirect('/')
+    
+def Pay_bank_amount_purchase(shop_id, farm_id, date, amount, number):
+    Farmer_purchase_payment_transaction(
+        shope_id=shop_id,
+        farmer_id=farm_id,
+        date=date,
+        amount=amount,
+        payment_type='Bank',
+        bank_number=number,
+    ).save()
+    
+def Pay_phone_pe_amount_purchase(shope_id, farmer_id, date, amount, number):
+    Farmer_purchase_payment_transaction(
+        shope_id=shope_id,
+        farmer_id=farmer_id,
+        date=date,
+        amount=amount,
+        payment_type='PhonePe',
+        phonepe_number=number,
+    ).save()
+    
+def change_purchase_farmer_bill_paid_status(farmer_id):
+    recived_payment = Farmer_purchase_payment_transaction.objects.filter(farmer_id=farmer_id).aggregate(Sum('amount'))['amount__sum']
+    if recived_payment == None:
+        recived_payment = 0
+    paid_bill_amount = Purchase_order_master.objects.filter(farmer_id=farmer_id, paid_status = 1).aggregate(Sum('total'))['total__sum']
+    if paid_bill_amount == None:
+        paid_bill_amount = 0
+    remening_amount = (int(recived_payment) - int(paid_bill_amount))
+    bill = Purchase_order_master.objects.filter(farmer_id=farmer_id, paid_status=0).order_by('-id')
+    
+    bill_id = 0
+    for b in bill:
+        if remening_amount >= b.total:
+            b.paid_status = 1
+            b.save()
+            remening_amount -= b.total
+        else:
+            bill_id = b.id
+            if int(remening_amount) != 0:
+                remening_amount = int(b.total) - int(remening_amount)
+            break
+    return {'bill_id':bill_id, 'remening_amount':remening_amount}
+
+def Pay_cash_amount_purchase(shope_id, farmer_id, date, amount):
+    Farmer_purchase_payment_transaction(
+        shope_id=shope_id,
+        farmer_id=farmer_id,
+        date=date,
+        amount=amount,
+        payment_type='cash',
+    ).save()
+    
 @csrf_exempt
 def sell_bill(request):
     if request.session.has_key('office_mobile'):
