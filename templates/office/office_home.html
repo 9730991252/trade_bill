@@ -8,6 +8,43 @@
     welcome - {{employee.name}}
 </div>
 {% include 'include/office/office_menu.html' %}
+<div class="container">
+<style>
+    .farmer_pending_box{
+        width: 90%;
+        height: fit-content;
+        padding: 5px;
+        margin-top: 10px;
+        background-color: rgb(244, 185, 185);
+        border-radius: 10px;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+    }
+</style>
+<div class="farmer_pending_box">
+    <div><b>शेतकरी एकूण देणे बाकी </b></div>
+    <div><b>Rs.{% all_purchase_farmer_total_pending_amount employee.shope_id %}</b></div>
+</div>
+<style>
+    .customer_pending_box{
+        width: 90%;
+        height: fit-content;
+        padding: 5px;
+        margin-top: 10px;
+        background-color: rgb(111, 181, 45);
+        border-radius: 10px;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+    }
+</style>
+<div class="customer_pending_box">
+    <div><b>उधारी एकूण  येणे बाकी </b></div>
+    <div><b>Rs.{% all_sell_customer_total_pending_amount employee.shope_id %}</b></div>
+</div>
 <style>
     .item_box{
         width: 90%;
@@ -23,7 +60,6 @@
     }
 </style>
 <br>
-<div class="container">
     {% for i in item %}
         <div class="item_box">
             <div><b>{{i.marathi_name}}</b></div>

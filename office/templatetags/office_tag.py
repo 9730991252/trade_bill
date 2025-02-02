@@ -93,6 +93,26 @@ def calculate_remaining_order_detail_weight(order_detail_id):
     return weight
 
 @register.simple_tag
+def all_sell_customer_total_pending_amount(shope_id):
+    pending_amount = Sell_order_master.objects.filter(shope_id=shope_id).aggregate(Sum('total'))['total__sum']
+    if pending_amount == None:
+        pending_amount = 0
+    paid_total_amount = Customer_sell_payment_transaction.objects.filter(shope_id=shope_id).aggregate(Sum('amount'))['amount__sum']
+    if paid_total_amount == None:
+        paid_total_amount = 0
+    return (pending_amount - paid_total_amount)
+
+@register.simple_tag
+def all_purchase_farmer_total_pending_amount(shope_id):
+    pending_amount = Purchase_order_master.objects.filter(shope_id=shope_id).aggregate(Sum('total'))['total__sum']
+    if pending_amount == None:
+        pending_amount = 0
+    paid_total_amount = Farmer_purchase_payment_transaction.objects.filter(shope_id=shope_id).aggregate(Sum('amount'))['amount__sum']
+    if paid_total_amount == None:
+        paid_total_amount = 0
+    return (pending_amount - paid_total_amount)
+
+@register.simple_tag
 def item_weight_detail_sum_purchase(id):
     i = 0
     if id:
