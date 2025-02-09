@@ -21,6 +21,20 @@ def office_home(request):
     else:
         return redirect('/')
     
+def purchase_farmer(request):
+    if request.session.has_key('office_mobile'):
+        mobile = request.session['office_mobile']
+        e = office_employee.objects.filter(mobile=mobile, status=1).first()
+        context={
+            'employee':e,
+            'farmer':Farmer.objects.filter(shope_id=e.shope.id),
+
+        }
+        return render(request, 'office/purchase_farmer.html', context)
+    else:
+        return redirect('/')
+    
+    
 def genereate_sell_bill_image(request, order_filter):
     if request.session.has_key('office_mobile'):
         mobile = request.session['office_mobile']

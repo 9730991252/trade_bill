@@ -1,0 +1,37 @@
+{% extends 'home/base.html' %}
+{% block head %}
+{% endblock head %}
+{% block content %}
+{% load office_tag %}
+{% include 'include/alert.html' %}
+<div>
+    welcome - {{employee.name}}
+</div>
+{% include 'include/office/office_menu.html' %}
+<style>
+    .farmer_pending_box{
+        width: 90%;
+        height: fit-content;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 5px;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        div{
+            text-align: center;
+        }
+    }
+   
+</style>
+<div class="container">
+    {% for f in farmer %}
+        <div class="farmer_pending_box">
+            <div class="farmer_pending_name"><b>{{f.name}}</b></div>
+            <div class="farmer_pending_mobile">{{f.mobile}}</div>
+            <div><a href="/office/pay_purchase_bill/{{f.id}}" class="btn btn-danger btn-sm">Pay</a></div>
+            <div style="grid-column-start: 1; grid-column-end: 4;">{{f.address}}</div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock content %}
