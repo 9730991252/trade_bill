@@ -208,7 +208,7 @@ def change_sell_farmer_bill_paid_status(customer_id):
     if paid_bill_amount == None:
         paid_bill_amount = 0
     remening_amount = (int(recived_payment) - int(paid_bill_amount))
-    bill = Sell_order_master.objects.filter(customer_id=customer_id, paid_status=0).order_by('-id')
+    bill = Sell_order_master.objects.filter(customer_id=customer_id, paid_status=0).order_by('date')
     
     bill_id = 0
     for b in bill:
