@@ -3,6 +3,7 @@ from owner.models import *
 from datetime import timedelta, date
 from django.db.models import Avg, Sum, Min, Max
 register = template.Library()
+import math
 
 
 @register.inclusion_tag('inclusion_tag/office/purchase_item_weight_detail.html')
@@ -112,6 +113,34 @@ def all_purchase_farmer_total_pending_amount(shope_id):
         paid_total_amount = 0
     return (pending_amount - paid_total_amount)
 
+
+@register.simple_tag
+def change_purchase_farmer_bill_paid_status(farmer_id):
+    opning = Farmer_purchase_opning_balance.objects.filter(farmer_id=farmer_id).first()
+    recived_payment = Farmer_purchase_payment_transaction.objects.filter(farmer_id=farmer_id).aggregate(Sum('amount'))['amount__sum']
+    final_amount = recived_payment
+    if opning.type == 1:
+        final_amount += opning.balance
+    else:
+        final_amount -= opning.balance
+    if final_amount == None:
+        final_amount = 0      
+    bill_amount = Purchase_order_master.objects.filter(farmer_id=farmer_id, paid_status = 1).aggregate(Sum('total'))['total__sum']
+    if bill_amount == None:
+        bill_amount = 0      
+    if int(math.floor(float(bill_amount))) >= int(math.floor(float(final_amount))):
+        bill = Purchase_order_master.objects.filter(farmer_id=farmer_id, paid_status = 1).first()
+        if bill:
+            bill.paid_status = 0
+            bill.save()
+            print('yes')
+    else:
+        bill = Purchase_order_master.objects.filter(farmer_id=farmer_id, paid_status = 0).first()
+        if bill:
+            bill.paid_status = 1
+            bill.save()
+            print('no')
+    
 @register.simple_tag
 def item_weight_detail_sum_purchase(id):
     i = 0

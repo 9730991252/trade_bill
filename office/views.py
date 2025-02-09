@@ -4,7 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from office.helper import *
 from django.db.models import Avg, Sum, Min, Max
 import math
-
+from datetime import datetime
 
 # Create your views here.
 def office_home(request):
@@ -25,6 +25,7 @@ def purchase_farmer(request):
     if request.session.has_key('office_mobile'):
         mobile = request.session['office_mobile']
         e = office_employee.objects.filter(mobile=mobile, status=1).first()
+
         context={
             'employee':e,
             'farmer':Farmer.objects.filter(shope_id=e.shope.id),
@@ -78,6 +79,54 @@ def pay_sell_bill(request, customer_id):
                 bank_number = request.POST.get('bank_number')
                 Pay_bank_amount_sell(e.shope.id,customer_id,date,amount,bank_number)
                 return redirect('pay_sell_bill', customer_id=customer_id)
+            if 'add_opning_amount'in request.POST:
+                t = request.POST.get('type')
+                amount = request.POST.get('amount')
+                print(amount)
+                if Customer_sell_opning_balance.objects.filter(customer_id=customer_id).exists():
+                    pass
+                else:
+                    Customer_sell_opning_balance(
+                        customer_id = customer_id,
+                        shope_id = e.shope_id,
+                        balance = amount,
+                        type = t,
+                    ).save()
+                return redirect('pay_sell_bill', customer_id=customer_id)
+            if 'edit_opning_balance'in request.POST:
+                t = request.POST.get('type')
+                amount = request.POST.get('amount')
+                
+                if Customer_sell_opning_balance.objects.filter(customer_id=customer_id).exists():
+                    of = Customer_sell_opning_balance.objects.filter(customer_id=customer_id).first()
+                    nf = Customer_sell_opning_balance.objects.filter(customer_id=customer_id).first()
+                    nf.balance = amount
+                    nf.type = t
+                    nf.save()    
+                    
+                if int(t) == 1:
+                    ba = int(math.floor(float(of.balance))) - int(math.floor(float(nf.balance)))
+                    bill = Sell_order_master.objects.filter(customer_id=customer_id, paid_status=1).order_by('id')
+                    for b in bill:
+                        if ba <= b.total:
+                            b.paid_status = 0
+                            b.save()
+                            ba -= b.total
+                        else:
+                            break
+                else:
+                    ba = int(math.floor(float(of.balance))) - int(math.floor(float(nf.balance)))
+                    bill = Sell_order_master.objects.filter(customer_id=customer_id, paid_status=1).order_by('id')
+                    for b in bill:
+                        if ba <= b.total:
+                            b.paid_status = 0
+                            b.save()
+                            ba -= b.total
+                        else:
+                            break
+                        
+                            
+                return redirect('pay_sell_bill', customer_id=customer_id)   
             
             pending_amount = Sell_order_master.objects.filter(customer_id=customer_id).aggregate(Sum('total'))['total__sum']
             if pending_amount == None:
@@ -85,15 +134,31 @@ def pay_sell_bill(request, customer_id):
             paid_total_amount = Customer_sell_payment_transaction.objects.filter(customer_id=customer_id).aggregate(Sum('amount'))['amount__sum']
             if paid_total_amount == None:
                 paid_total_amount = 0
+                
+        last_year = datetime.now().year
+        last_year -= 1
+        b_opn = Customer_sell_opning_balance.objects.filter(customer_id=customer_id).first()
+        final_amount = (int(pending_amount) -  int(paid_total_amount))
+        check_paid_total_amount = ''
+        if b_opn:
+            if b_opn.type == 0:
+                final_amount += int(b_opn.balance)
+                check_paid_total_amount = int(paid_total_amount) - int(b_opn.balance)
+            else:
+                final_amount -= int(b_opn.balance)
+                check_paid_total_amount =int(paid_total_amount) + int(b_opn.balance)
         context = {
             'employee': e,
             'customer':Customer.objects.filter(id=customer_id).first(),
-            'bill':Sell_order_master.objects.filter(customer_id=customer_id),
+            'bill':Sell_order_master.objects.filter(customer_id=customer_id).order_by('-id'),
             'remening_amount':remening_amount,
             'transaction':Customer_sell_payment_transaction.objects.filter(customer_id=customer_id).order_by('-date'),
             'paid_total_amount':paid_total_amount,
-            'final_amount':(int(pending_amount) -  int(paid_total_amount)),
+            'final_amount':final_amount,
             'bill_total_amount':pending_amount,
+            'last_year':last_year,
+            'customer_sell_opning_balance':Customer_sell_opning_balance.objects.filter(customer_id=customer_id).first(),
+            'check_paid_total_amount':check_paid_total_amount
         }
         return render(request, 'office/pay_sell_bill.html', context)
     else:
@@ -129,7 +194,14 @@ def Pay_cash_amount_sell(shope_id, customer_id, date, amount):
     ).save()
     
 def change_sell_farmer_bill_paid_status(customer_id):
+    b_opn = Customer_sell_opning_balance.objects.filter(customer_id=customer_id).first()
     recived_payment = Customer_sell_payment_transaction.objects.filter(customer_id=customer_id).aggregate(Sum('amount'))['amount__sum']
+    if b_opn:
+        if b_opn.type == 0:
+            recived_payment -= int(b_opn.balance)
+        else:
+            recived_payment += int(b_opn.balance)
+    
     if recived_payment == None:
         recived_payment = 0
     paid_bill_amount = Sell_order_master.objects.filter(customer_id=customer_id, paid_status = 1).aggregate(Sum('total'))['total__sum']
@@ -174,12 +246,73 @@ def pay_purchase_bill(request, farmer_id):
                 bank_number = request.POST.get('bank_number')
                 Pay_bank_amount_purchase(e.shope.id,farmer_id,date,amount,bank_number)
                 return redirect('pay_purchase_bill', farmer_id=farmer_id)
+            if 'add_opning_amount'in request.POST:
+                t = request.POST.get('type')
+                amount = request.POST.get('amount')
+                if Farmer_purchase_opning_balance.objects.filter(farmer_id=farmer_id).exists():
+                    pass
+                else:
+                    Farmer_purchase_opning_balance(
+                        farmer_id = farmer_id,
+                        shope_id = e.shope_id,
+                        balance = amount,
+                        type = t,
+                    ).save()
+                return redirect('pay_purchase_bill', farmer_id=farmer_id)   
+            if 'edit_opning_balance'in request.POST:
+                t = request.POST.get('type')
+                amount = request.POST.get('amount')
+                
+                if Farmer_purchase_opning_balance.objects.filter(farmer_id=farmer_id).exists():
+                    of = Farmer_purchase_opning_balance.objects.filter(farmer_id=farmer_id).first()
+                    nf = Farmer_purchase_opning_balance.objects.filter(farmer_id=farmer_id).first()
+                    nf.balance = amount
+                    nf.type = t
+                    nf.save()    
+                    
+                if int(t) == 1:
+                    ba = int(math.floor(float(of.balance))) - int(math.floor(float(nf.balance)))
+                    bill = Purchase_order_master.objects.filter(farmer_id=farmer_id, paid_status=1).order_by('id')
+                    for b in bill:
+                        if ba <= b.total:
+                            b.paid_status = 0
+                            b.save()
+                            ba -= b.total
+                        else:
+                            break
+                else:
+                    ba = int(math.floor(float(of.balance))) - int(math.floor(float(nf.balance)))
+                    bill = Purchase_order_master.objects.filter(farmer_id=farmer_id, paid_status=1).order_by('id')
+                    for b in bill:
+                        if ba <= b.total:
+                            b.paid_status = 0
+                            b.save()
+                            ba -= b.total
+                        else:
+                            break
+                        
+                            
+                    
+
+                return redirect('pay_purchase_bill', farmer_id=farmer_id)   
             pending_amount = Purchase_order_master.objects.filter(farmer_id=farmer_id).aggregate(Sum('total'))['total__sum']
             if pending_amount == None:
                 pending_amount = 0
             paid_total_amount = Farmer_purchase_payment_transaction.objects.filter(farmer_id=farmer_id).aggregate(Sum('amount'))['amount__sum']
             if paid_total_amount == None:
                 paid_total_amount = 0
+                
+        last_year = datetime.now().year
+        last_year -= 1
+        b_opn = Farmer_purchase_opning_balance.objects.filter(farmer_id=farmer_id).first()
+        final_amount = (int(pending_amount) -  int(paid_total_amount))
+        if b_opn:
+            if b_opn.type == 0:
+                final_amount += int(b_opn.balance)
+                check_paid_total_amount = int(paid_total_amount) - int(b_opn.balance)
+            else:
+                final_amount -= int(b_opn.balance)
+                check_paid_total_amount =int(paid_total_amount) + int(b_opn.balance)
         context = {
             'employee': e,
             'farmer':Farmer.objects.filter(id=farmer_id).first(),
@@ -187,12 +320,16 @@ def pay_purchase_bill(request, farmer_id):
             'paid_total_amount':paid_total_amount,
             'bill':Purchase_order_master.objects.filter(farmer_id=farmer_id),
             'remening_amount':remening_amount,
-            'final_amount':(int(pending_amount) -  int(paid_total_amount)),
+            'final_amount':final_amount,
             'bill_total_amount':pending_amount,
+            'last_year':last_year,
+            'farmer_purchase_opning_balance':Farmer_purchase_opning_balance.objects.filter(farmer_id=farmer_id).first(),
+            'check_paid_total_amount':check_paid_total_amount
         }
         return render(request, 'office/pay_purchase_bill.html', context)
     else:
         return redirect('/')
+    
     
 def Pay_bank_amount_purchase(shop_id, farm_id, date, amount, number):
     Farmer_purchase_payment_transaction(
@@ -215,7 +352,14 @@ def Pay_phone_pe_amount_purchase(shope_id, farmer_id, date, amount, number):
     ).save()
     
 def change_purchase_farmer_bill_paid_status(farmer_id):
+    b_opn = Farmer_purchase_opning_balance.objects.filter(farmer_id=farmer_id).first()
     recived_payment = Farmer_purchase_payment_transaction.objects.filter(farmer_id=farmer_id).aggregate(Sum('amount'))['amount__sum']
+    if b_opn:
+        if b_opn.type == 0:
+            recived_payment -= int(b_opn.balance)
+        else:
+            recived_payment += int(b_opn.balance)
+            
     if recived_payment == None:
         recived_payment = 0
     paid_bill_amount = Purchase_order_master.objects.filter(farmer_id=farmer_id, paid_status = 1).aggregate(Sum('total'))['total__sum']
@@ -223,7 +367,6 @@ def change_purchase_farmer_bill_paid_status(farmer_id):
         paid_bill_amount = 0
     remening_amount = (int(recived_payment) - int(paid_bill_amount))
     bill = Purchase_order_master.objects.filter(farmer_id=farmer_id, paid_status=0).order_by('-id')
-    
     bill_id = 0
     for b in bill:
         if remening_amount >= b.total:
@@ -235,6 +378,11 @@ def change_purchase_farmer_bill_paid_status(farmer_id):
             if int(remening_amount) != 0:
                 remening_amount = int(b.total) - int(remening_amount)
             break
+    bt = Purchase_order_master.objects.filter(farmer_id=farmer_id, paid_status=0).aggregate(Sum('total'))['total__sum']
+    if bt == None:
+        bt = 0
+    if int(remening_amount) >= int(bt): 
+        remening_amount = 0
     return {'bill_id':bill_id, 'remening_amount':remening_amount}
 
 def Pay_cash_amount_purchase(shope_id, farmer_id, date, amount):

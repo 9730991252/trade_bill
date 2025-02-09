@@ -125,6 +125,21 @@ class Farmer_purchase_payment_transaction(models.Model):
     date = models.DateField()
     added_date = models.DateTimeField(auto_now_add=True)
     
+class Farmer_purchase_opning_balance(models.Model):
+    farmer = models.ForeignKey(Farmer, on_delete=models.PROTECT, null=True)
+    shope = models.ForeignKey(Shope,on_delete=models.PROTECT,null=True)
+    balance = models.FloatField()
+    type = models.IntegerField()
+    added_date = models.DateTimeField(auto_now_add=True)
+    
+class Customer_sell_opning_balance(models.Model):
+    customer = models.ForeignKey(Customer, on_delete=models.PROTECT, null=True)
+    shope = models.ForeignKey(Shope,on_delete=models.PROTECT,null=True)
+    balance = models.FloatField()
+    type = models.IntegerField()
+    added_date = models.DateTimeField(auto_now_add=True)
+    
+    
 class Customer_sell_payment_transaction(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT, null=True)
     shope = models.ForeignKey(Shope,on_delete=models.PROTECT,null=True)

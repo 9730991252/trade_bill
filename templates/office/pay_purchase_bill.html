@@ -11,9 +11,10 @@
 <div class="text-center"><b> खरेदी </b></div>
 <hr>
 
+
 <div class="text-center">
     <b>{{farmer.name}}</b><br>
-    {% if paid_total_amount > bill_total_amount %}
+    {% if check_paid_total_amount > bill_total_amount %}
         <div class="text-success"><b>Rs.{{final_amount}}</b> शेतकऱ्याला ॲडव्हान्स दिला </div>
     {% else %}
         <div class="text-danger"><b>Rs.{{final_amount}}</b> शेतकऱ्यास देणे बाकी  </div>
@@ -98,9 +99,64 @@
                 <th><b>Rs.{{paid_total_amount}}</b></th>
         </thead>
     </table>
+    <br>
     
-    
+    <div>1 April {{last_year}} ची रक्कम {% if farmer_purchase_opning_balance %}Rs.{{farmer_purchase_opning_balance.balance}} {% if farmer_purchase_opning_balance.type == 1 %} ॲडव्हान्स {% else %} देणे {% endif %}  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#edit_opning">Edit</button>{% else %}Rs.0<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add">Add</button>{% endif %}</div>
 
+  <!-- Modal -->
+  <div class="modal fade" id="add" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">1 April {{last_year}}</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form method="POST">
+            <select class="form-control" name="type" id="">
+                <option value="1">ॲडव्हान्स</option>
+                <option value="0">देणे</option>
+            </select>
+              <br>
+            <input type="number" name="amount" class="form-control" placeholder="रक्कम" required>
+            <br>
+            <button type="submit" class="btn btn-danger mt-3" name="add_opning_amount">Add</button>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="edit_opning" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">1 April {{last_year}}</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form method="POST">
+            <select class="form-control" name="type" id="">
+                <option value="1" {% if farmer_purchase_opning_balance.type == 1 %} selected {% endif %}>ॲडव्हान्स</option>
+                <option value="0" {% if farmer_purchase_opning_balance.type == 0 %} selected {% endif %}>देणे</option>
+            </select>
+              <br>
+            <input type="number" value="{{farmer_purchase_opning_balance.balance}}" name="amount" class="form-control" placeholder="रक्कम" required>
+            <br>
+            <button type="submit" class="btn btn-danger mt-3" name="edit_opning_balance">Edit</button>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+    <br>
     <!--TODO--------------------------------------------------------------------->
 
     <style>
