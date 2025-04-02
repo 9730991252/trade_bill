@@ -55,6 +55,11 @@ def delete_purchase_cart_item(request):
         cart_id = request.GET['c_id']
         Purchase_cart.objects.filter(id=cart_id).delete()
     return JsonResponse({'t': 't'})
+def delete_sell_cart_item(request):
+    if request.method == 'GET':
+        cart_id = request.GET['c_id']
+        Sell_cart.objects.filter(id=cart_id).delete()
+    return JsonResponse({'t': 't'})
 
 def add_to_item_weight_purchase(request):
     if request.method == 'GET':
@@ -189,7 +194,7 @@ def save_farmer(request):
         id = Farmer.objects.filter(shope_id=shope_id).first().id
     return JsonResponse({'id': id})
 
-def save_customer(request):
+def save_sell_customer(request):
     if request.method == 'GET':
         name = request.GET['name']
         address = request.GET['address']

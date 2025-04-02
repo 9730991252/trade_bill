@@ -3,6 +3,7 @@ from . import views
 urlpatterns = [
     path('search_item', views.search_item, name='search_item'),
     path('delete_purchase_cart_item', views.delete_purchase_cart_item, name='delete_purchase_cart_item'),
+    path('delete_sell_cart_item', views.delete_sell_cart_item, name='delete_sell_cart_item'),
     path('add_to_item_weight_purchase', views.add_to_item_weight_purchase, name='add_to_item_weight_purchase'),
     path('remove_item_weight_purchase', views.remove_item_weight_purchase, name='remove_item_weight_purchase'),
     path('calculete_prise_purchase', views.calculete_prise_purchase, name='calculete_prise_purchase'),
@@ -13,5 +14,5 @@ urlpatterns = [
     path('calculete_prise_sell', views.calculete_prise_sell, name='calculete_prise_sell'),
     path('remove_item_weight_sell', views.remove_item_weight_sell, name='remove_item_weight_sell'),
     path('customer_check', views.customer_check, name='customer_check'),
-    path('save_customer', views.save_customer, name='save_customer'),
+    path('save_sell_customer', views.save_sell_customer, name='save_sell_customer'),
 ]

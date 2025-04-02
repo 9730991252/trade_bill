@@ -413,6 +413,7 @@ def sell_bill(request):
                 return redirect('/office/sell_bill/')
             if 'remove_cart_item'in request.GET:
                 id = request.GET.get('id')
+                print('id', id)
                 Sell_cart.objects.filter(id=id).delete()
                 return redirect('/office/sell_bill/')
 
