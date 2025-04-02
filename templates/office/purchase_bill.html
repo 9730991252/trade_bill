@@ -273,6 +273,7 @@ function save_farmer(){
             document.getElementById('add_customer_btn').style.display = 'none';
             document.getElementById('cancel_farmer').style.display = 'flex';
             document.getElementById('farmer_id').value = res.id
+            document.getElementById('farmer_result').innerHTML = '';
         }
     })
 }
