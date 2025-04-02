@@ -141,12 +141,12 @@ def farmer_check(request):
         shope_id = request.GET['shope_id']
         add_btn_status = 1
         print(shope_id)
-        if 1 < len(name) :
-            c = Farmer.objects.filter(Q(name__icontains=name),shope_id=shope_id)
-        if 1 < len(address) :
-            c = Farmer.objects.filter(Q(address__icontains=address),shope_id=shope_id)
-        if 1 < len(mobile) :
-            c = Farmer.objects.filter(Q(mobile__icontains=mobile),shope_id=shope_id)
+        if 0 < len(name) :
+            c = list(Farmer.objects.filter(Q(name__icontains=name),shope_id=shope_id))
+        if 0 < len(address) :
+            c += Farmer.objects.filter(Q(address__icontains=address),shope_id=shope_id)
+        if 0 < len(mobile) :
+            c += Farmer.objects.filter(Q(mobile__icontains=mobile),shope_id=shope_id)
             if (c):
                 if int(c[0].mobile) == int(mobile):
                     add_btn_status = 0
@@ -164,12 +164,12 @@ def customer_check(request):
         mobile = request.GET['mobile']
         shope_id = request.GET['shope_id']
         add_btn_status = 1
-        if 1 < len(name) :
-            c = Customer.objects.filter(Q(name__icontains=name),shope_id=shope_id)
-        if 1 < len(address) :
-            c = Customer.objects.filter(Q(address__icontains=address),shope_id=shope_id)
-        if 1 < len(mobile) :
-            c = Customer.objects.filter(Q(mobile__icontains=mobile),shope_id=shope_id)
+        if 0 < len(name) :
+            c = list(Customer.objects.filter(Q(name__icontains=name),shope_id=shope_id))
+        if 0 < len(address) :
+            c += Customer.objects.filter(Q(address__icontains=address),shope_id=shope_id)
+        if 0 < len(mobile) :
+            c += Customer.objects.filter(Q(mobile__icontains=mobile),shope_id=shope_id)
             if (c):
                 if int(c[0].mobile) == int(mobile):
                     add_btn_status = 0
