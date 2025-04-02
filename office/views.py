@@ -306,6 +306,7 @@ def pay_purchase_bill(request, farmer_id):
         last_year -= 1
         b_opn = Farmer_purchase_opning_balance.objects.filter(farmer_id=farmer_id).first()
         final_amount = (int(pending_amount) -  int(paid_total_amount))
+        check_paid_total_amount = 0
         if b_opn:
             if b_opn.type == 0:
                 final_amount += int(b_opn.balance)
