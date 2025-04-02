@@ -191,7 +191,7 @@ def save_farmer(request):
             mobile=mobile,
             shope_id=shope_id
         ).save()
-        id = Farmer.objects.filter(shope_id=shope_id).first().id
+        id = Farmer.objects.filter(shope_id=shope_id,mobile=mobile).first().id
     return JsonResponse({'id': id})
 
 def save_sell_customer(request):
@@ -206,5 +206,5 @@ def save_sell_customer(request):
             mobile=mobile,
             shope_id=shope_id
         ).save()
-        id = Customer.objects.filter(shope_id=shope_id).first().id
+        id = Customer.objects.filter(shope_id=shope_id,mobile=mobile).first().id
     return JsonResponse({'id': id})
