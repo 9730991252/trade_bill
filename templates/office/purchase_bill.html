@@ -198,7 +198,7 @@
         </div>
         
         <div class="customer_detail">
-            <input type="hidden" name="farmer_id" id="farmer_id">
+            <input type="hidden" name="farmer_id" id="farmer_id" required>
             <div class="customer_name"><input  oninput="farmer_check()" id="customer_name" value="" name="name" type="text" class="form-control" placeholder="नाव" required></div>
                 <input oninput="farmer_check()" id="customer_add" name="address" type="text" value="" class="form-control mt-2" placeholder="पत्ता" required>
 
@@ -210,7 +210,7 @@
         </div>
         <div id="farmer_result"></div>
 
-        <button type="submit"  class="btn btn-danger mb-2 mt-2" name="complete_bill">बिल पूर्ण करा</button>
+        <button type="submit"  class="btn btn-danger mb-2 mt-2" style="display: none;" id="complete_bill_btn" name="complete_bill">बिल पूर्ण करा</button>
     </div>
 </form>
     {% endif %}
@@ -250,6 +250,8 @@ function select_farmer(id, name, mobile, address){
     document.getElementById('farmer_result').innerHTML = '';
     document.getElementById('add_customer_btn').style.display = 'none';
     document.getElementById('cancel_farmer').style.display = 'flex';
+    document.getElementById('complete_bill_btn').style.display = 'unset';
+
 }
 
 function save_farmer(){
@@ -274,6 +276,7 @@ function save_farmer(){
             document.getElementById('cancel_farmer').style.display = 'flex';
             document.getElementById('farmer_id').value = res.id
             document.getElementById('farmer_result').innerHTML = '';
+            document.getElementById('complete_bill_btn').style.display = 'unset';
         }
     })
 }
@@ -414,6 +417,8 @@ function calculete_prise(weight, c_id){
             },
             success: function(res){
                 $("#item_weight_result").html(res.t)
+                document.getElementById('complete_bill_btn').style.display = 'unset';
+
             }
         })
     }

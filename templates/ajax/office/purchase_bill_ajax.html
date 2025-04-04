@@ -68,7 +68,7 @@
     <br>
     <div class="list-group">
         
-        <input type="text" class="form-control mb-1" placeholder="Item Name" oninput="search_item(this.value)">
+        <input type="text" class="form-control mb-1" placeholder="मालाचे नाव शोधा" oninput="search_item(this.value)">
         <div id="item_result">
             
         </div>
@@ -108,19 +108,19 @@
 </div>
 
 <div class="customer_detail">
-<input type="hidden" name="farmer_id" id="farmer_id">
-<div class="customer_name"><input  oninput="farmer_check()" id="customer_name" value="" name="name" type="text" class="form-control" placeholder="नाव" ></div>
-    <input oninput="farmer_check()" id="customer_add" name="address" type="text" value="" class="form-control mt-2" placeholder="पत्ता" >
+<input type="hidden" name="farmer_id" id="farmer_id" required>
+<div class="customer_name"><input  oninput="farmer_check()" id="customer_name" value="" name="name" type="text" class="form-control" placeholder="नाव" required></div>
+    <input oninput="farmer_check()" id="customer_add" name="address" type="text" value="" class="form-control mt-2" placeholder="पत्ता" required>
 
     <div class="flex">
-        <div><input oninput="farmer_check(), check_number()" id="customer_mobile" value="" name="mobile" type="text" class="form-control mt-2" placeholder="मोबाइल नंबर " ></div>
-        <div id="add_customer_btn"><button onclick="save_farmer()" class="btn btn-primary mt-2" name="add_customer">जतन करा</button></div>
+        <div><input oninput="farmer_check(), check_number()" id="customer_mobile" value="" name="mobile" type="number" class="form-control mt-2" placeholder="मोबाइल नंबर " required></div>
+        <div id="add_customer_btn"><a onclick="save_farmer()" class="btn btn-primary mt-2" name="add_customer">जतन करा</a></div>
         <div id="cancel_farmer" style="display: none;"><button onclick="cancel_farmer()" class="btn text-danger">X</button></div>
     </div>
 </div>
 <div id="farmer_result"></div>
 
-<button type="submit"  class="btn btn-danger mb-2 mt-2" name="complete_bill" id="complete_bill">बिल पूर्ण करा</button>
+<button type="submit"  class="btn btn-danger mb-2 mt-2" style="display: none;" id="complete_bill_btn" name="complete_bill">बिल पूर्ण करा</button>
 </div>
 </form>
 {% endif %}

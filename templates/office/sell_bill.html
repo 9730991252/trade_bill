@@ -209,7 +209,7 @@
 
         <div id="customer_result"></div>
 
-        <button type="submit"  class="btn btn-danger mb-2 mt-2" name="complete_bill">बिल पूर्ण करा</button>
+        <button type="submit"  class="btn btn-danger mb-2 mt-2" style="display: none;" id="complete_bill_btn" name="complete_bill">बिल पूर्ण करा</button>
     </div>
 </form>
     {% endif %}
@@ -249,7 +249,10 @@ function select_customer(id, name, mobile, address){
     document.getElementById('customer_result').innerHTML = '';
     document.getElementById('add_customer_btn').style.display = 'none';
     document.getElementById('cancel_customer').style.display = 'flex';
+    document.getElementById('complete_bill_btn').style.display = 'unset';
+
 }
+
 
 function save_sell_customer(){
     name = document.getElementById('customer_name').value;
@@ -273,6 +276,8 @@ function save_sell_customer(){
             document.getElementById('cancel_customer').style.display = 'flex';
             document.getElementById('customer_id').value = res.id
             $("#customer_result").html('')
+            document.getElementById('complete_bill_btn').style.display = 'unset';
+
         }
     })
 }
@@ -413,6 +418,8 @@ function calculete_prise(weight, c_id){
             },
             success: function(res){
                 $("#item_weight_result").html(res.t)
+    document.getElementById('complete_bill_btn').style.display = 'unset';
+
             }
         })
     }

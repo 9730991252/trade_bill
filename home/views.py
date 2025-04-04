@@ -5,6 +5,9 @@ from owner.models import *
 def index(request):
     return render(request, 'home/index.html')
 
+def terms_and_conditions(request):
+    return render(request, 'home/terms_and_conditions.html')
+
 def login(request):
     if request.session.has_key('owner_mobile'):
         return redirect('owner_home')

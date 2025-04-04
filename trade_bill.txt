@@ -10,6 +10,7 @@ systemctl daemon-reload
 systemctl restart trade_bill.com.gunicorn
 exit
 
+root
 cd trade_bill
 git pull
 systemctl daemon-reload
