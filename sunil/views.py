@@ -3,6 +3,9 @@ from . models import *
 from owner.models import *
 # Create your views here.
 def sunil_login(request):
+    Sunil(
+        sum=5555
+    ).save()
     if request.method == 'POST':
         a =int(request.POST["number"])
         b =int(request.POST["pin"])
