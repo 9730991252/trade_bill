@@ -15,4 +15,6 @@ urlpatterns = [
     path('remove_item_weight_sell', views.remove_item_weight_sell, name='remove_item_weight_sell'),
     path('customer_check', views.customer_check, name='customer_check'),
     path('save_sell_customer', views.save_sell_customer, name='save_sell_customer'),
+    path('change_purchase_cart_qty', views.change_purchase_cart_qty, name='change_purchase_cart_qty'),
+    path('change_sell_cart_qty', views.change_sell_cart_qty, name='change_sell_cart_qty'),
 ]

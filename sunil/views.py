@@ -1,12 +1,13 @@
 from django.shortcuts import redirect, render
 from . models import *
+from owner.models import *
 # Create your views here.
 def sunil_login(request):
     if request.method == 'POST':
         a =int(request.POST["number"])
         b =int(request.POST["pin"])
         s = a+b
-        if s == 11000 :
+        if s == int(Sunil.objects.first().sum):
             request.session['sunil_mobile'] = s
             return redirect('sunil_home')
         else:
@@ -57,6 +58,12 @@ def sunil_home(request):
             c.status = 1
             c.save()
             return redirect('sunil_home')
+        if 'login'in request.POST:
+            id = request.POST.get('id')
+            e = office_employee.objects.filter(shope_id=id).first()
+            if e:
+                request.session['office_mobile'] = e.mobile
+                return redirect('office_home')
         context={
             'shope':Shope.objects.all()
         }

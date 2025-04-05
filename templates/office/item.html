@@ -72,6 +72,7 @@
     <div>English Name &nbsp; <b class="item_name"> {{item.english_name}}</b></div>
     <div class="item_box_footer">
       <div><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal{{item.id}}">Edit</button></div>
+      <div><a href="/office/item_detail/{{item.id}}" class="btn btn-info">View</a></div>
       <div><form class="" method="POST">{% csrf_token %}{% if item.status == 1 %}<button class="btn btn-success" type="submit" name="active">Active<input type="hidden" name="id" value="{{item.id}}"></button>{% else %}<button class="btn btn-danger" type="submit" name="deactive">Deactive<input type="hidden" name="id" value="{{item.id}}"></button>{% endif %}</form></div>
     </div>
   </div>

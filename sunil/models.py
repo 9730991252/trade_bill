@@ -1,6 +1,8 @@
 from django.db import models
 
 # Create your models here.
+class Sunil(models.Model):
+    sum = models.IntegerField()
 class Shope(models.Model):
     shope_name = models.CharField(max_length=100)
     owner_name = models.CharField(max_length=100)

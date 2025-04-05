@@ -21,6 +21,55 @@ def office_home(request):
     else:
         return redirect('/')
     
+def item_detail(request, id):
+    if request.session.has_key('office_mobile'):
+        mobile = request.session['office_mobile']
+        e = office_employee.objects.filter(mobile=mobile, status=1).first()
+        item = Item.objects.filter(id=id).first()
+        if 'edit_item_purchase'in request.POST:
+            purchase_hamali = request.POST.get('purchase_hamali')
+            purchase_tolai = request.POST.get('purchase_tolai')
+            purchase_aadat = request.POST.get('purchase_aadat')
+            purchase_shears = request.POST.get('purchase_shears')
+            purchase_eater = request.POST.get('purchase_eater')
+            item.purchase_hamali = purchase_hamali
+            item.purchase_tolai = purchase_tolai
+            item.purchase_aadat = purchase_aadat
+            item.purchase_shears = purchase_shears
+            item.purchase_eater = purchase_eater
+            item.save()
+            return redirect('/office/item_detail/'+str(item.id))
+        if 'edit_item_sell'in request.POST:
+            sell_hamali = request.POST.get('sell_hamali')
+            sell_tolai = request.POST.get('sell_tolai')
+            sell_aadat = request.POST.get('sell_aadat')
+            sell_shears = request.POST.get('sell_shears')
+            sell_eater = request.POST.get('sell_eater')
+            item.sell_hamali = sell_hamali
+            item.sell_tolai = sell_tolai
+            item.sell_aadat = sell_aadat
+            item.sell_shears = sell_shears
+            item.sell_eater = sell_eater
+            item.save()
+            return redirect('/office/item_detail/'+str(item.id))
+        if 'edit_item_marathi_name' in request.POST:
+            name = request.POST.get('marathi_name')
+            item.marathi_name = name
+            item.save()
+            return redirect('item_detail', id=id)
+        if 'edit_item_english_name' in request.POST:
+            name = request.POST.get('english_name')
+            item.english_name = name
+            item.save()
+            return redirect('item_detail', id=id)
+        context={
+            'employee':e,
+            'item':item,
+        }
+        return render(request, 'office/item_detail.html', context)
+    else:
+        return redirect('/')
+    
 def purchase_farmer(request):
     if request.session.has_key('office_mobile'):
         mobile = request.session['office_mobile']
@@ -306,7 +355,7 @@ def pay_purchase_bill(request, farmer_id):
         last_year -= 1
         b_opn = Farmer_purchase_opning_balance.objects.filter(farmer_id=farmer_id).first()
         final_amount = (int(pending_amount) -  int(paid_total_amount))
-        check_paid_total_amount = 0
+        check_paid_total_amount = Farmer_purchase_payment_transaction.objects.filter(farmer_id=farmer_id).aggregate(Sum('amount'))['amount__sum']
         if b_opn:
             if b_opn.type == 0:
                 final_amount += int(b_opn.balance)

@@ -14,6 +14,16 @@ class Item(models.Model):
     shope = models.ForeignKey(Shope,on_delete=models.PROTECT,null=True)
     marathi_name = models.CharField(max_length=100)
     english_name = models.CharField(max_length=100)
+    purchase_hamali  = models.FloatField(default=0)
+    purchase_tolai  = models.FloatField(default=0)
+    purchase_aadat  = models.FloatField(default=0)
+    purchase_shears = models.FloatField(default=0)
+    purchase_eater  = models.FloatField(default=0)
+    sell_hamali  = models.FloatField(default=0)
+    sell_tolai  = models.FloatField(default=0)
+    sell_aadat  = models.FloatField(default=0)
+    sell_shears = models.FloatField(default=0)
+    sell_eater  = models.FloatField(default=0)
     status = models.IntegerField(default=1)    
 
     

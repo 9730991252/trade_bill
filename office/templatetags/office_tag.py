@@ -4,6 +4,120 @@ from datetime import timedelta, date
 from django.db.models import Avg, Sum, Min, Max
 register = template.Library()
 import math
+@register.simple_tag
+def calculete_hamali_percentage_purchase(employee_id):
+    a = 0
+    if employee_id:
+        cart = Purchase_cart.objects.filter(office_employee_id=employee_id)
+        for c in cart:
+            weight = Purchase_item_weight_detail.objects.filter(cart_id=c.id).aggregate(Sum('weight'))['weight__sum'] or 0
+            a += (int(weight) * c.item.purchase_hamali)
+
+    return a
+
+@register.simple_tag
+def calculete_tolai_percentage_purchase(employee_id):
+    a = 0
+    if employee_id:
+        cart = Purchase_cart.objects.filter(office_employee_id=employee_id)
+        for c in cart:
+            weight = Purchase_item_weight_detail.objects.filter(cart_id=c.id).aggregate(Sum('weight'))['weight__sum'] or 0
+            a += (int(weight) * c.item.purchase_tolai)
+
+    return a
+
+@register.simple_tag
+def calculete_aadat_percentage_purchase(employee_id):
+    a = 0
+    if employee_id:
+        cart = Purchase_cart.objects.filter(office_employee_id=employee_id)
+        for c in cart:
+            amount = (int(c.prise) * int(c.qty)) * c.item.purchase_aadat / 100
+            if amount != None:
+                a += amount
+
+    return a
+
+@register.simple_tag
+def calculete_shears_percentage_purchase(employee_id):
+    a = 0
+    if employee_id:
+        cart = Purchase_cart.objects.filter(office_employee_id=employee_id)
+        for c in cart:
+            amount = (int(c.prise) * int(c.qty)) * c.item.purchase_shears / 100
+            if amount != None:
+                a += amount
+
+    return a
+
+@register.simple_tag
+def calculete_eater_percentage_purchase(employee_id):
+    a = 0
+    if employee_id:
+        cart = Purchase_cart.objects.filter(office_employee_id=employee_id)
+        for c in cart:
+            amount = (int(c.prise) * int(c.qty)) * c.item.purchase_eater / 100
+            if amount != None:
+                a += amount
+
+    return a
+
+@register.simple_tag
+def calculete_hamali_percentage_sell(employee_id):
+    a = 0
+    if employee_id:
+        cart = Sell_cart.objects.filter(office_employee_id=employee_id)
+        for c in cart:
+            weight = Sell_item_weight_detail.objects.filter(cart_id=c.id).aggregate(Sum('weight'))['weight__sum'] or 0
+            a += (int(weight) * c.item.sell_hamali)
+
+    return a
+
+@register.simple_tag
+def calculete_tolai_percentage_sell(employee_id):
+    a = 0
+    if employee_id:
+        cart = Sell_cart.objects.filter(office_employee_id=employee_id)
+        for c in cart:
+            weight = Sell_item_weight_detail.objects.filter(cart_id=c.id).aggregate(Sum('weight'))['weight__sum'] or 0
+            a += (int(weight) * c.item.sell_tolai)
+
+    return a
+
+@register.simple_tag
+def calculete_aadat_percentage_sell(employee_id):
+    a = 0
+    if employee_id:
+        cart = Sell_cart.objects.filter(office_employee_id=employee_id)
+        for c in cart:
+            amount = (int(c.prise) * int(c.qty)) * c.item.sell_aadat / 100
+            if amount != None:
+                a += amount
+                
+    return a
+
+@register.simple_tag
+def calculete_shears_percentage_sell(employee_id):
+    a = 0
+    if employee_id:
+        cart = Sell_cart.objects.filter(office_employee_id=employee_id)
+        for c in cart:
+            amount = (int(c.prise) * int(c.qty)) * c.item.sell_shears / 100
+            if amount != None:
+                a += amount
+    return a
+
+@register.simple_tag
+def calculete_eater_percentage_sell(employee_id):
+    a = 0
+    if employee_id:
+        cart = Sell_cart.objects.filter(office_employee_id=employee_id)
+        for c in cart:
+            amount = (int(c.prise) * int(c.qty)) * c.item.sell_eater / 100
+            if amount != None:
+                a += amount
+
+    return a
 
 
 @register.inclusion_tag('inclusion_tag/office/purchase_item_weight_detail.html')

@@ -14,6 +14,7 @@
 
 <div class="text-center">
     <b>{{farmer.name}}</b><br>
+    {{check_paid_total_amount}}
     {% if check_paid_total_amount > bill_total_amount %}
         <div class="text-success"><b>Rs.{{final_amount}}</b> शेतकऱ्याला ॲडव्हान्स दिला </div>
     {% else %}

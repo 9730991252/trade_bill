@@ -77,6 +77,26 @@ def add_to_item_weight_purchase(request):
     t = render_to_string('ajax/office/purchase_bill_ajax.html', {'cart':Purchase_cart.objects.filter(office_employee_id=employee_id), 'employee':office_employee.objects.filter(id=employee_id).first()})
     return JsonResponse({'t': t})
 
+def change_purchase_cart_qty(request):
+    if request.method == 'GET':
+        cart_id = request.GET['cart_id']
+        qty = request.GET['qty']
+        c = Purchase_cart.objects.filter(id=cart_id).first()
+        c.qty = qty
+        c.save()
+    t = render_to_string('ajax/office/purchase_bill_ajax.html', {'cart':Purchase_cart.objects.filter(office_employee_id=c.office_employee_id), 'employee':c.office_employee})
+    return JsonResponse({'t': t})
+
+def change_sell_cart_qty(request):
+    if request.method == 'GET':
+        cart_id = request.GET['cart_id']
+        qty = request.GET['qty']
+        c = Sell_cart.objects.filter(id=cart_id).first()
+        c.qty = qty
+        c.save()
+    t = render_to_string('ajax/office/sell_bill_ajax.html', {'cart':Sell_cart.objects.filter(office_employee_id=c.office_employee_id), 'employee':c.office_employee})
+    return JsonResponse({'t': t})
+
 def remove_item_weight_purchase(request):
     if request.method == 'GET':
         item_weight_detail_id = request.GET['item_weight_detail_id']

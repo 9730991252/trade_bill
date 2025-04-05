@@ -1,0 +1,136 @@
+{% extends 'home/base.html' %}
+{% block head %}
+{% endblock head %}
+{% block content %}
+{% load office_tag %}
+{% include 'include/alert.html' %}
+<div>
+    welcome - {{employee.name}}
+</div>
+{% include 'include/office/office_menu.html' %}
+<div class="text-center">
+
+    <div class="text-center">
+        <b id="main_item_english_name"><b style="font-weight: 400;">English Name</b>  {{item.english_name}} <button class="btn" onclick="edit_item_english_name()"><i class="fa fa-pencil" aria-hidden="true"></i></button></b>
+        <form method="POST" id="edit_item_english_name" style="display: none;gap: 10px;justify-content: center;align-items: center;">{% csrf_token %}<input type="text" value="{{item.english_name}}" name="english_name" ><button style="width: 20px;height: 20px;display: flex;justify-content: center;align-items: center;" type="submit" name="edit_item_english_name" class="btn btn-success btn-sm" onclick="location.reload()"><i class="fa fa-check" aria-hidden="true"></i></button></form>
+        <script>
+            function edit_item_english_name(){
+            document.getElementById('edit_item_english_name').style.display = 'flex'
+            document.getElementById('main_item_english_name').style.display = 'none'
+            }
+        </script>
+    </div>
+    <div class="container">
+        <div class="text-center">
+            <b id="main_item_marathi_name"><b style="font-weight: 400;">Marathi Name</b>  {{item.marathi_name}} <button class="btn" onclick="edit_item_marathi_name()"><i class="fa fa-pencil" aria-hidden="true"></i></button></b>
+            <form method="POST" id="edit_item_marathi_name" style="display: none;gap: 10px;justify-content: center;align-items: center;">{% csrf_token %}<input type="text" value="{{item.marathi_name}}" name="marathi_name" ><button style="width: 20px;height: 20px;display: flex;justify-content: center;align-items: center;" type="submit" name="edit_item_marathi_name" class="btn btn-success btn-sm" onclick="location.reload()"><i class="fa fa-check" aria-hidden="true"></i></button></form>
+            <script>
+                function edit_item_marathi_name(){
+                document.getElementById('edit_item_marathi_name').style.display = 'flex'
+                document.getElementById('main_item_marathi_name').style.display = 'none'
+                }
+            </script>
+        </div>
+    </div>
+
+
+    <br>
+</div>
+<style>
+    .container{
+        display: flex;
+        justify-content: space-evenly;
+        flex-wrap: wrap;
+    }
+    .contaier_inner_box{
+        width: 380px;
+        border: 1px solid black;
+        text-align: center;
+        border-radius: 10px;
+        .contaier_inner_box_a{
+            padding-left: 10px; 
+            display: flex; 
+            flex-direction: column;
+            gap: 10px; 
+            justify-content: center;
+            .contaier_inner_box_b{
+                display: flex; 
+                gap: 10px; 
+                justify-content: space-evenly;
+                input{
+                    width: unset !important;
+                    text-align: center;
+                }
+            }
+        }
+    }
+</style>
+<div class="container">
+    <div class="contaier_inner_box">
+        <p>
+            खरेदी
+        </p>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="contaier_inner_box_a">
+                <div class="contaier_inner_box_b">
+                    <div>हमाली 1kg</div>
+                    <div>Rs.<input type="number" value="{{item.purchase_hamali}}" name="purchase_hamali" style="width: 50px;" required></div>
+                </div>
+                <div class="contaier_inner_box_b">
+                    <div>तोलाई 1kg</div>
+                    <div>Rs.<input type="number" value="{{item.purchase_tolai}}" name="purchase_tolai" style="width: 50px;" required></div>
+                </div>
+                <div class="contaier_inner_box_b">
+                    <div>आडत %</div>
+                    <div><input type="number" value="{{item.purchase_aadat}}" name="purchase_aadat" style="width: 50px;" required></div>
+                </div>
+                <div class="contaier_inner_box_b">
+                    <div>शेअर्स %</div>
+                    <div><input type="number" value="{{item.purchase_shears}}" name="purchase_shears" style="width: 50px;" required></div>
+                </div>
+                <div class="contaier_inner_box_b">
+                    <div>इतर % </div>
+                    <div><input type="number" value="{{item.purchase_eater}}" name="purchase_eater" style="width: 50px;" required></div>
+                </div>
+            </div>
+            <br>
+            <button type="submit" class="btn btn-primary" name="edit_item_purchase" >Edit</button>
+        </form>
+        <br>
+    </div>
+    <div class="contaier_inner_box">
+        <p>
+            विक्री
+        </p>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="contaier_inner_box_a" >
+            <div class="contaier_inner_box_b">
+                <div>हमाली 1kg</div>
+                <div>Rs.<input type="number" value="{{item.sell_hamali}}" name="sell_hamali" style="width: 50px;" required></div>
+            </div>
+            <div class="contaier_inner_box_b">
+                <div>तोलाई 1kg</div>
+                <div>Rs.<input type="number" value="{{item.sell_tolai}}" name="sell_tolai" style="width: 50px;" required></div>
+            </div>
+            <div class="contaier_inner_box_b">
+                <div>आडत %</div>
+                <div><input type="number" value="{{item.sell_aadat}}" name="sell_aadat" style="width: 50px;" required></div>
+            </div>
+            <div class="contaier_inner_box_b">
+                <div>शेअर्स %</div>
+                <div><input type="number" value="{{item.sell_shears}}" name="sell_shears" style="width: 50px;" required></div>
+            </div>
+            <div class="contaier_inner_box_b">
+                <div>इतर %</div>
+                <div><input type="number" value="{{item.sell_eater}}" name="sell_eater" style="width: 50px;" required></div>
+            </div>
+        </div>
+        <br>
+        <button type="submit" class="btn btn-primary" name="edit_item_sell" >Edit</button>
+    </form>
+    <br>
+    </div>
+</div>
+{% endblock content %}
