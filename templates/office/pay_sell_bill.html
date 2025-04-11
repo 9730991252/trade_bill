@@ -9,15 +9,15 @@
     welcome - {{employee.name}}
 </div>
 {% include 'include/office/office_menu.html' %}
-<div class="text-center"><b> खरेदी </b></div>
+<div class="text-center"><b> विक्री </b></div>
 <hr>
 
 <div class="text-center">
     <b>{{customer.name}}</b><br>
     {% if paid_total_amount > bill_total_amount %}
-        <div class="text-success"><b>Rs.{{final_amount}}</b> शेतकऱ्याला ॲडव्हान्स दिला </div>
+        <div class="text-danger"><b>Rs.{{final_amount}}</b> शेतकऱ्याला ॲडव्हान्स दिला </div>
     {% else %}
-        <div class="text-danger"><b>Rs.{{final_amount}}</b> शेतकऱ्यास देणे बाकी  </div>
+        <div class="text-success"><b>Rs.{{final_amount}}</b> शेतकऱ्यास येणे बाकी  </div>
     {% endif %}
     <b></b>
 </div>
