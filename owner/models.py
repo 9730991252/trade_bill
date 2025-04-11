@@ -1,5 +1,7 @@
 from django.db import models
 from sunil.models import *
+from PIL import Image
+
 # Create your models here.
 class office_employee(models.Model):
     shope = models.ForeignKey(Shope,on_delete=models.PROTECT,null=True)
@@ -120,6 +122,17 @@ class Sell_item_weight_detail(models.Model):
     cart_id = models.CharField(max_length=100,null=True)
     weight = models.IntegerField()
     Order_detail = models.ForeignKey(Sell_order_detail,on_delete=models.PROTECT,null=True)
+
+class Logo(models.Model):
+    shope = models.ForeignKey(Shope,on_delete=models.PROTECT,null=True)
+    image = models.ImageField(upload_to="logo_images",default="",null=True, blank=True) 
+    def save(self, *args,**kwargs):
+        super().save(*args,**kwargs)
+        image = Image.open(self.image.path)
+        print('image...',image)
+        output_size = (300,300)
+        image.thumbnail(output_size)
+        image.save(self.image.path)
 
 class Purchase_item_weight_detail(models.Model):
     cart_id = models.CharField(max_length=100,null=True)

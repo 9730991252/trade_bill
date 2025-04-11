@@ -17,5 +17,6 @@ urlpatterns = [
     path('purchase_farmer/', views.purchase_farmer, name='purchase_farmer'),
     path('profile/', views.profile, name='profile'),
     path('item_detail/<id>', views.item_detail, name='item_detail'),
+    path('logo/', views.logo , name='logo'),
 
 ]
