@@ -5,6 +5,7 @@ from office.helper import *
 from django.db.models import Avg, Sum, Min, Max
 import math
 from datetime import datetime
+from django.contrib import messages
 
 # Create your views here.
 def office_home(request):
@@ -20,6 +21,35 @@ def office_home(request):
         return render(request, 'office/office_home.html', context)
     else:
         return redirect('/')
+    
+def profile(request):
+    if request.session.has_key('office_mobile'):
+        mobile = request.session['office_mobile']
+        e = office_employee.objects.filter(mobile=mobile, status=1).first()
+        shope = e.shope
+        if 'edit_profile'in request.POST:
+            shope_name = request.POST.get('shope_name')
+            owner_name = request.POST.get('owner_name')
+            address = request.POST.get('address')
+            description = request.POST.get('description')
+            contact_details = request.POST.get('contact_details')
+            mobile = request.POST.get('mobile')
+            pin = request.POST.get('pin')
+            shope.shope_name = shope_name
+            shope.owner_name = owner_name
+            shope.address = address
+            shope.description = description
+            shope.contact_details = contact_details
+            shope.pin = pin
+            shope.save()
+            messages.success(request,"Profile Edited Successfully")
+        context={
+            'employee':e,
+            'shope':shope
+        }
+        return render(request, 'office/profile.html', context)
+    else:
+        return redirect('login')
     
 def item_detail(request, id):
     if request.session.has_key('office_mobile'):
@@ -498,6 +528,7 @@ def sell_bill(request):
                             shope_id=c.office_employee.shope.id,
                             office_employee_id = c.office_employee.id,
                             item_id = c.item.id,
+                            item_name = c.item.english_name,
                             order_master_id = om.id,
                             prise=c.prise,
                             qty=c.qty,
@@ -600,6 +631,7 @@ def purchase_bill(request):
                             shope_id=c.office_employee.shope.id,
                             office_employee_id = c.office_employee.id,
                             item_id = c.item.id,
+                            item_name = c.item.english_name,
                             prise=c.prise,
                             qty=c.qty,
                             weight=weight,

@@ -114,13 +114,12 @@
         {% for o in order_master %}
             {% order_detail o.order_filter o.shope_id as order_detail %}
             {% for d in order_detail %}
-            <div>{{d.item.marathi_name}}</div>
-            <div>{{d.weight}}</div>
-            <div>0</div>
-            <div>{% calculate_remaining_order_detail_weight d.id %}</div>
-            <div><button style="scale: 0.8;" type="submit" class="btn btn-danger btn-sm">close</button></div>
+                <div>{{d.item.marathi_name}}</div>
+                <div>{{d.weight}}</div>
+                <div>0</div>
+                <div>{% calculate_remaining_order_detail_weight d.id %}</div>
+                <div><button style="scale: 0.8;" type="submit" class="btn btn-danger btn-sm">close</button></div>
             {% endfor %}
-
         {% endfor %}
         </div>
 </div>

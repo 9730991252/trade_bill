@@ -15,6 +15,7 @@ urlpatterns = [
     path('pay_purchase_bill/<int:farmer_id>', views.pay_purchase_bill, name='pay_purchase_bill'),
     path('pay_sell_bill/<int:customer_id>', views.pay_sell_bill, name='pay_sell_bill'),
     path('purchase_farmer/', views.purchase_farmer, name='purchase_farmer'),
+    path('profile/', views.profile, name='profile'),
     path('item_detail/<id>', views.item_detail, name='item_detail'),
 
 ]
