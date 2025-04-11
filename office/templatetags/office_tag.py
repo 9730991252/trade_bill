@@ -90,7 +90,8 @@ def calculete_aadat_percentage_sell(employee_id):
     if employee_id:
         cart = Sell_cart.objects.filter(office_employee_id=employee_id)
         for c in cart:
-            amount = (int(c.prise) * int(c.qty)) * c.item.sell_aadat / 100
+            weight = Sell_item_weight_detail.objects.filter(cart_id=c.id).aggregate(Sum('weight'))['weight__sum'] or 0
+            amount =  ((int(weight) * int(c.prise)) * c.item.sell_aadat) / 100
             if amount != None:
                 a += amount
                 
