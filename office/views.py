@@ -152,6 +152,7 @@ def genereate_sell_bill_image(request, order_filter):
             'employee': e,
             'order_master': om,
             'order_detail': Sell_order_detail.objects.filter(shope_id=e.shope_id, order_filter=order_filter),
+            'logo':Logo.objects.filter(shope=e.shope).first()
         }
         return render(request, 'office/genereate_sell_bill_image.html', context)
     else:

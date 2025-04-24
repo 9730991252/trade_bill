@@ -13,15 +13,34 @@
         width: 380px;
         margin: 10px;
         background-color: rgb(255, 255, 255);
+        position: relative;
+    }
+    .logo{
+        width: 80px;
+        height: 80px;
+        border-radius: 8px;
+        overflow: hidden;
+        position: absolute;
+        top: 30px;
+        left: 0px;
+        img{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+
+        }
     }
     .shope_name{
         text-align: center;
         font-size: 22px;
+        margin-bottom: -5px;
+        margin-top: 10px;
     }
     .description{
-        margin: 0 auto;
+        margin: 0px auto;
         text-align: center;
         font-size: 15px;
+        line-height: 50px;
     }
     .address{
         margin: 0 auto;
@@ -103,6 +122,11 @@ a{
 <div id="canvse">
     <div>
 <div class="bill_box">
+    {% if logo.image %}
+        <div class="logo">
+            <img src="{{logo.image.url}}" alt="">
+        </div>
+    {% endif %}
     <div class="header">
         <div class="bill_main_header">
             <div class="text-center">विक्री बिल</div>
