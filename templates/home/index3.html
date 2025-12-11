@@ -2,167 +2,207 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Perfect Circle Draw Challenge</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Perfect Circle Draw Challenge — Live Score</title>
+<style>
+  /* Base reset + font */
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
 
-    html, body {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background-color: black;
-      color: #e5e7eb;
-    }
+  /* Full black background */
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #000000; /* pure black as requested */
+    color: #e5e7eb;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-    canvas {
-      position: fixed;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      display: block;
-      cursor: crosshair;
-    }
+  /* Canvas covers full screen and uses devicePixelRatio for crispness.
+     touch-action none prevents default scrolling while drawing on mobile. */
+  canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: crosshair;
+    touch-action: none;
+    -webkit-tap-highlight-color: transparent;
+    filter: drop-shadow(0 0 8px rgba(0,0,0,0.6));
+  }
 
-    /* Heading at top */
-    .top-heading {
-      position: fixed;
-      top: 16px;
-      left: 0;
-      right: 0;
-      display: flex;
-      justify-content: center;
-      pointer-events: none;
-      text-align: center;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.7);
-    }
+  /* TOP HEADING */
+  .top-heading {
+    position: fixed;
+    top: env(safe-area-inset-top, 20px);
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+    padding: 6px 12px;
+  }
 
-    .top-heading span {
-      font-size: clamp(1rem, 2.4vw, 1.4rem);
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      font-weight: 700;
-      color: #fbbf24;
-    }
+  .top-heading span {
+    font-size: 28px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 800;
+    background: linear-gradient(90deg, #facc15, #fbbf24, #f59e0b);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: goldGlow 5s linear infinite;
+    text-shadow: 0 0 10px rgba(255, 190, 0, 0.18);
+    pointer-events: none;
+  }
 
-    /* Center score UI */
-    .center-score {
-      position: fixed;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-shadow: 0 2px 12px rgba(0,0,0,0.6);
-      pointer-events: none;
-    }
+  @keyframes goldGlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
 
-    #scoreValue {
-      font-size: clamp(3rem, 12vw, 6rem);
-      font-weight: 900;
-      line-height: 1;
-    }
+  /* CENTER SCORE UI */
+  .center-score {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+    text-align: center;
+    padding: 20px;
+  }
 
-    #scoreText {
-      margin-top: 8px;
-      font-size: 1rem;
-      color: #a5b4fc;
-      min-height: 20px;
-    }
+  #scoreValue {
+    font-size: clamp(2.5rem, 12vw, 6.5rem); /* responsive font size */
+    font-weight: 900;
+    line-height: 1;
+    background: linear-gradient(180deg, #ffffff, #a5b4fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 14px rgba(255,255,255,0.28));
+  }
 
-    /* Bottom bar with reset button */
-    .bottom-bar {
-      position: fixed;
-      bottom: 24px;
-      left: 0;
-      right: 0;
-      display: flex;
-      justify-content: center;
-      pointer-events: none;
-    }
+  #scoreText {
+    margin-top: 10px;
+    font-size: clamp(0.9rem, 2.6vw, 1.1rem);
+    color: #a5b4fc;
+    opacity: 0.9;
+    letter-spacing: 0.04em;
+  }
 
-    .bottom-inner {
-      pointer-events: auto;
-      background: rgba(15, 23, 42, 0.85);
-      padding: 8px 16px;
-      border-radius: 999px;
-      backdrop-filter: blur(14px);
-      border: 1px solid rgba(148, 163, 184, 0.5);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 0.85rem;
-      color: #9ca3af;
-      max-width: calc(100% - 32px);
-    }
+  /* BOTTOM BAR */
+  .bottom-bar {
+    position: fixed;
+    bottom: calc(env(safe-area-inset-bottom, 24px));
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    padding: 8px;
+    pointer-events: none;
+  }
 
-    .hint {
-      flex: 1;
-      min-width: 0;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      white-space: nowrap;
-    }
+  .bottom-inner {
+    pointer-events: auto;
+    padding: 12px 18px;
+    border-radius: 999px;
+    max-width: calc(100% - 32px);
+    width: min(980px, calc(100% - 32px));
 
-    button {
-      border: none;
-      padding: 6px 18px;
-      border-radius: 999px;
-      background: linear-gradient(135deg, #38bdf8, #2563eb);
-      color: #020617;
-      font-weight: 600;
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      cursor: pointer;
-      box-shadow: 0 8px 22px rgba(37, 99, 235, 0.7);
-      transition: transform 0.12s ease, box-shadow 0.12s ease;
-      white-space: nowrap;
-    }
+    background: rgba(20, 30, 55, 0.22);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(120, 150, 255, 0.14);
 
-    button:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 12px 30px rgba(37, 99, 235, 0.9);
-    }
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.92rem;
+    color: #d1d5db;
 
-    @media (max-width: 600px) {
-      .hint {
-        white-space: normal;
-      }
-    }
-  </style>
+    box-shadow: 0 6px 28px rgba(30, 60, 160, 0.12);
+  }
+
+  .hint {
+    flex: 1;
+    min-width: 0;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    opacity: 0.95;
+    font-size: 0.95rem;
+  }
+
+  /* BUTTON (larger on mobile for easy tapping) */
+  button {
+    border: none;
+    padding: 10px 20px;
+    border-radius: 999px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    font-size: 0.9rem;
+    cursor: pointer;
+
+    background: linear-gradient(135deg, #60a5fa, #2563eb);
+    color: #f8fafc;
+    box-shadow: 0 8px 30px rgba(37, 99, 235, 0.28);
+
+    transition: transform 0.14s ease, box-shadow 0.18s ease;
+  }
+
+  button:hover { transform: translateY(-1.6px); box-shadow: 0 12px 38px rgba(37, 99, 235, 0.4); }
+  button:active { transform: translateY(0) scale(0.99); box-shadow: 0 6px 18px rgba(37, 99, 235, 0.18); }
+
+  /* Small devices adjustments */
+  @media (max-width: 720px) {
+    .top-heading span { font-size: 18px; letter-spacing: 0.08em; }
+    #scoreValue { font-size: clamp(2rem, 18vw, 5.2rem); }
+    .bottom-inner { padding: 10px 12px; gap: 8px; border-radius: 16px; }
+    .hint { display: none; } /* hide long hint to keep bar compact */
+    button { padding: 12px 18px; font-size: 1rem; }
+  }
+
+  /* Extra small devices (very small phones) */
+  @media (max-width: 420px) {
+    .top-heading { top: env(safe-area-inset-top, 12px); }
+    .top-heading span { font-size: 14px; }
+    #scoreText { font-size: 0.95rem; }
+    .bottom-inner { width: calc(100% - 24px); padding: 10px; gap: 10px; border-radius: 12px; }
+    button { padding: 12px 16px; font-size: 0.98rem; }
+    .center-score { padding: 12px; }
+  }
+
+  /* Accessibility: focus styles */
+  button:focus { outline: 3px solid rgba(37,99,235,0.18); outline-offset: 3px; }
+
+</style>
 </head>
 <body>
 
   <canvas id="circleCanvas"></canvas>
 
-  <!-- Heading -->
-  <div class="top-heading">
-    <span>perfect circle draw challeng by prasanna & vishal</span>
-  </div>
+  <div class="top-heading"><span>perfect circle draw challeng by prasanna & vishal</span></div>
 
-  <!-- Score display -->
   <div class="center-score">
     <div id="scoreValue">0%</div>
     <div id="scoreText">Draw a circle around the dot</div>
   </div>
 
-  <!-- Bottom bar -->
   <div class="bottom-bar">
     <div class="bottom-inner">
       <span class="hint">💡 Tip: Keep your hand steady and complete a full circle.</span>
-      <button id="resetBtn">Reset</button>
+      <button id="resetBtn" aria-label="Reset drawing">Reset</button>
     </div>
   </div>
 
   <script>
     const canvas = document.getElementById("circleCanvas");
     const ctx = canvas.getContext("2d");
-
     const scoreValue = document.getElementById("scoreValue");
     const scoreText = document.getElementById("scoreText");
     const resetBtn = document.getElementById("resetBtn");
@@ -171,45 +211,44 @@
     let drawing = false;
     let points = [];
     let lastScore = 0;
-    let hue = 0; // 🌈 rainbow color counter
+    let hue = 0;
+
+    // For live update throttling
+    let pendingLive = false;
+    let lastLiveScore = 0;
 
     function resizeCanvas() {
       width = window.innerWidth;
       height = window.innerHeight;
-
       const ratio = window.devicePixelRatio || 1;
-      canvas.width = width * ratio;
-      canvas.height = height * ratio;
+      canvas.width = Math.round(width * ratio);
+      canvas.height = Math.round(height * ratio);
       canvas.style.width = width + "px";
       canvas.style.height = height + "px";
       ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-
       cx = width / 2;
       cy = height / 2;
-
       drawBackground();
     }
 
     function drawBackground() {
       ctx.clearRect(0, 0, width, height);
 
-      // Nice dark background
-      const g = ctx.createRadialGradient(
-        cx, cy, 0,
-        cx, cy, Math.max(width, height) * 0.8
-      );
-      g.addColorStop(0, "#020617");
-      g.addColorStop(1, "#020617");
-      ctx.fillStyle = g;
+      // subtle vignette on pure black background for depth
+      const grad = ctx.createRadialGradient(cx, cy, Math.max(1, Math.min(width, height) * 0.08), cx, cy, Math.max(width, height) * 0.9);
+      grad.addColorStop(0, "#000000");
+      grad.addColorStop(1, "#000000");
+      ctx.fillStyle = grad;
       ctx.fillRect(0, 0, width, height);
 
-      // Center dot only (no guide circle)
+      // center target dot
       ctx.beginPath();
       ctx.fillStyle = "#facc15";
-      ctx.arc(cx, cy, 4, 0, Math.PI * 2);
+      ctx.arc(cx, cy, Math.max(3, Math.min(width, height) * 0.006), 0, Math.PI * 2);
       ctx.fill();
     }
 
+    // initialize
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
 
@@ -217,44 +256,47 @@
       const rect = canvas.getBoundingClientRect();
       const clientX = e.touches ? e.touches[0].clientX : e.clientX;
       const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-      return {
-        x: clientX - rect.left,
-        y: clientY - rect.top
-      };
+      return { x: clientX - rect.left, y: clientY - rect.top };
     }
 
     function startDraw(e) {
       e.preventDefault();
       drawing = true;
       points = [];
-      hue = 0;        // reset rainbow for each try
+      hue = 0;
       drawBackground();
-
       const p = getPos(e);
       points.push(p);
-
       ctx.beginPath();
       ctx.moveTo(p.x, p.y);
-
-      scoreText.textContent = "Keep going in one smooth circle…";
+      scoreText.textContent = "Drawing… live score shown";
+      lastLiveScore = 0;
+      pendingLive = false;
     }
 
     function moveDraw(e) {
       if (!drawing) return;
       e.preventDefault();
-
       const p = getPos(e);
       points.push(p);
 
-      // 🌈 Rainbow line
       hue = (hue + 2) % 360;
       ctx.strokeStyle = `hsl(${hue}, 100%, 60%)`;
-      ctx.lineWidth = 4;
+      ctx.lineWidth = Math.max(3, (Math.min(width, height) / 160)); // adaptive thickness
       ctx.lineCap = "round";
       ctx.lineJoin = "round";
-
       ctx.lineTo(p.x, p.y);
       ctx.stroke();
+
+      if (!pendingLive) {
+        pendingLive = true;
+        requestAnimationFrame(() => {
+          const live = computeScoreFromPoints(points);
+          lastLiveScore = Math.round(lastLiveScore + (live - lastLiveScore) * 0.35);
+          scoreValue.textContent = lastLiveScore + "%";
+          pendingLive = false;
+        });
+      }
     }
 
     function endDraw(e) {
@@ -262,7 +304,7 @@
       drawing = false;
       ctx.closePath();
 
-      if (points.length < 40) {
+      if (points.length < 30) {
         animateScore(0);
         scoreText.textContent = "Draw a bigger, smoother circle!";
         return;
@@ -271,42 +313,80 @@
       evaluateCircle();
     }
 
-    function evaluateCircle() {
-      // Radius of each point from center
-      const radii = points.map(p => Math.hypot(p.x - cx, p.y - cy));
-      const avgR = radii.reduce((a, b) => a + b, 0) / radii.length;
+    // smoothing
+    function smoothPoints(points, window = 3) {
+      if (points.length <= window) return points.slice();
+      const out = [];
+      for (let i = 0; i < points.length; i++) {
+        let sumX = 0, sumY = 0, count = 0;
+        for (let j = i - Math.floor(window/2); j <= i + Math.floor(window/2); j++) {
+          if (j >= 0 && j < points.length) { sumX += points[j].x; sumY += points[j].y; count++; }
+        }
+        out.push({ x: sumX / count, y: sumY / count });
+      }
+      return out;
+    }
 
-      // Standard deviation → measures wobbliness
-      const variance =
-        radii
-          .map(r => (r - avgR) ** 2)
-          .reduce((a, b) => a + b, 0) / radii.length;
-      const std = Math.sqrt(variance);
+    // scoring function (same as before)
+    function computeScoreFromPoints(rawPoints) {
+      if (!rawPoints || rawPoints.length < 6) return 0;
+      const sPoints = smoothPoints(rawPoints, 3);
 
-      // Closure: how close start and end meet
-      const start = points[0];
-      const end = points[points.length - 1];
+      const radii = sPoints.map(p => Math.hypot(p.x - cx, p.y - cy));
+      const avgR = radii.reduce((a,b) => a+b, 0) / radii.length;
+      const variance = radii.map(r => (r - avgR) ** 2).reduce((a,b) => a+b, 0) / radii.length;
+      const std = Math.sqrt(Math.max(0, variance));
+
+      const start = sPoints[0];
+      const end = sPoints[sPoints.length - 1];
       const closure = Math.hypot(start.x - end.x, start.y - end.y);
 
       const wiggle = std / (avgR || 1);
       const closureRatio = closure / (avgR || 1);
 
-      // Penalty formula (tuned to "feel" good)
-      const penalty = wiggle * 8 + closureRatio * 4;
-      let score = 100 / (1 + penalty);
-      score = Math.max(0, Math.min(100, score));
+      const angles = sPoints.map(p => {
+        let a = Math.atan2(p.y - cy, p.x - cx) * 180 / Math.PI;
+        if (a < 0) a += 360;
+        return a;
+      }).sort((a,b) => a-b);
 
-      animateScore(score);
+      let maxGap = 0;
+      for (let i = 1; i < angles.length; i++) maxGap = Math.max(maxGap, angles[i] - angles[i-1]);
+      const wrapGap = (angles[0] + 360) - angles[angles.length - 1];
+      maxGap = Math.max(maxGap, wrapGap);
+      const coverage = Math.max(0, 1 - (maxGap / 360));
 
-      if (score > 90) {
-        scoreText.textContent = "Amazing! 🔥";
-      } else if (score > 75) {
-        scoreText.textContent = "Great circle!";
-      } else if (score > 50) {
-        scoreText.textContent = "Not bad, keep trying.";
-      } else {
-        scoreText.textContent = "Keep practicing 🙂";
+      const wigglePenalty = Math.tanh(wiggle * 2);
+      const closurePenalty = Math.tanh(closureRatio * 2);
+
+      const coverageWeight = 0.50;
+      const wiggleWeight = 0.35;
+      const closureWeight = 0.15;
+
+      let rawScore =
+        coverage * coverageWeight +
+        (1 - wigglePenalty) * wiggleWeight +
+        (1 - closurePenalty) * closureWeight;
+
+      if (coverage < 0.60) {
+        const factor = coverage / 0.60;
+        rawScore = rawScore * factor * factor;
       }
+
+      let score = Math.round(100 * rawScore);
+      score = Math.max(0, Math.min(100, score));
+      return score;
+    }
+
+    function evaluateCircle() {
+      const finalScore = computeScoreFromPoints(points);
+      animateScore(finalScore);
+
+      if (finalScore >= 95) scoreText.textContent = "Perfect circle! 🔥";
+      else if (finalScore >= 80) scoreText.textContent = "Amazing — great circle!";
+      else if (finalScore >= 60) scoreText.textContent = "Nice! A little wobble.";
+      else if (finalScore >= 35) scoreText.textContent = "Not bad — keep practicing.";
+      else scoreText.textContent = "Keep practicing 🙂";
     }
 
     function animateScore(target) {
@@ -314,42 +394,39 @@
       const end = Math.round(target);
       const startTime = performance.now();
       const duration = 600;
-
       function frame(now) {
         const t = Math.min(1, (now - startTime) / duration);
-        const eased = 1 - Math.pow(1 - t, 3); // ease-out
+        const eased = 1 - Math.pow(1 - t, 3);
         const val = Math.round(start + (end - start) * eased);
         scoreValue.textContent = val + "%";
-
-        if (t < 1) {
-          requestAnimationFrame(frame);
-        } else {
+        if (t < 1) requestAnimationFrame(frame);
+        else {
           lastScore = end;
+          lastLiveScore = end;
         }
       }
-
       requestAnimationFrame(frame);
     }
 
-    // Mouse events
+    // events (mouse + touch)
     canvas.addEventListener("mousedown", startDraw);
     canvas.addEventListener("mousemove", moveDraw);
     canvas.addEventListener("mouseup", endDraw);
     canvas.addEventListener("mouseleave", endDraw);
 
-    // Touch events
     canvas.addEventListener("touchstart", startDraw, { passive: false });
     canvas.addEventListener("touchmove", moveDraw, { passive: false });
     canvas.addEventListener("touchend", endDraw, { passive: false });
     canvas.addEventListener("touchcancel", endDraw, { passive: false });
 
-    // Reset button
+    // Reset
     resetBtn.addEventListener("click", () => {
       points = [];
       drawBackground();
       animateScore(0);
       scoreText.textContent = "Draw a circle around the dot";
     });
+
   </script>
 </body>
 </html>
