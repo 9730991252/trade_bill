@@ -3,7 +3,7 @@ from sunil.models import *
 from owner.models import *
 # Create your views here.
 def index(request):
-    return render(request, 'home/index.html')
+    return render(request, 'home/index3.html')
 
 def terms_and_conditions(request):
     return render(request, 'home/terms_and_conditions.html')

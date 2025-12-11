@@ -148,7 +148,7 @@ server{
     listen 80;
     listen [::]:80;
 
-    server_name bill.tejorder.com www.bill.tejorder.com;
+    server_name math.tejorder.com www.math.tejorder.com;
     client_max_body_size 500M;
 
     location = /favicon.ico { access_log off; log_not_found off; }
