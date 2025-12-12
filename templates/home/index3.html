@@ -1,26 +1,15 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Perfect Circle Draw Challenge — Live Score</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Perfect Circle Draw Challenge — Live Score</title>
 <style>
   /* Base reset + font */
-  * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #000000; color: #e5e7eb; }
 
-  /* Full black background */
-  html, body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background: #000000; /* pure black as requested */
-    color: #e5e7eb;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
-  /* Canvas covers full screen and uses devicePixelRatio for crispness.
-     touch-action none prevents default scrolling while drawing on mobile. */
+  /* Canvas */
   canvas {
     position: fixed;
     inset: 0;
@@ -30,42 +19,74 @@
     cursor: crosshair;
     touch-action: none;
     -webkit-tap-highlight-color: transparent;
-    filter: drop-shadow(0 0 8px rgba(0,0,0,0.6));
   }
 
-  /* TOP HEADING */
-  .top-heading {
+  /* Header (school/title) stays at top-left */
+  .header {
     position: fixed;
-    top: env(safe-area-inset-top, 20px);
-    left: 0;
-    right: 0;
+    top: env(safe-area-inset-top, 18px);
+    left: 16px;
+    right: 16px;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
+    align-items: center;
     pointer-events: none;
-    padding: 6px 12px;
+    gap: 12px;
   }
 
-  .top-heading span {
-    font-size: 28px;
-    letter-spacing: 0.12em;
+  .school {
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .school .title {
+    font-size: 18px;
+    font-weight: 900;
     text-transform: uppercase;
-    font-weight: 800;
-    background: linear-gradient(90deg, #facc15, #fbbf24, #f59e0b);
-    background-size: 200% 200%;
+    letter-spacing: 0.12em;
+    background: linear-gradient(90deg,#facc15,#f59e0b,#f97316);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: goldGlow 5s linear infinite;
-    text-shadow: 0 0 10px rgba(255, 190, 0, 0.18);
+    text-shadow: 0 6px 20px rgba(250,180,20,0.06);
+  }
+
+  .school .subtitle {
+    font-size: 12px;
+    color: rgba(200,210,255,0.9);
+    opacity: 0.85;
+    font-weight: 700;
+    letter-spacing: 0.06em;
     pointer-events: none;
   }
 
-  @keyframes goldGlow {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+  /* Byline moved down: small badge near bottom-left but above controls */
+  .byline-badge {
+    position: fixed;
+    left: 18px;
+    bottom: calc(env(safe-area-inset-bottom, 20px) + 68px); /* lifted above control bar */
+    pointer-events: none;
+    z-index: 45;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 
-  /* CENTER SCORE UI */
+  .byline-badge .names {
+    background: rgba(255,255,255,0.03);
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.04);
+    font-size: 12px;
+    font-weight: 800;
+    color: #e6eefc;
+    letter-spacing: 0.04em;
+    pointer-events: none;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+  }
+
+  /* Score block in center */
   .center-score {
     position: fixed;
     inset: 0;
@@ -73,360 +94,529 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    pointer-events: none;
     text-align: center;
+    pointer-events: none;
     padding: 20px;
   }
 
   #scoreValue {
-    font-size: clamp(2.5rem, 12vw, 6.5rem); /* responsive font size */
+    font-size: clamp(2.4rem, 11vw, 6rem);
     font-weight: 900;
     line-height: 1;
-    background: linear-gradient(180deg, #ffffff, #a5b4fc);
+    background: linear-gradient(180deg, #fff, #a5b4fc);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 14px rgba(255,255,255,0.28));
+    filter: drop-shadow(0 0 18px rgba(160,160,255,0.08));
   }
 
   #scoreText {
     margin-top: 10px;
-    font-size: clamp(0.9rem, 2.6vw, 1.1rem);
+    font-size: clamp(0.9rem, 2.6vw, 1.05rem);
     color: #a5b4fc;
-    opacity: 0.9;
+    opacity: 0.95;
     letter-spacing: 0.04em;
   }
 
-  /* BOTTOM BAR */
+  /* Decorative center ring */
+  .center-ring {
+    position: absolute;
+    width: min(60vmin, 540px);
+    height: min(60vmin, 540px);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    top: 50%;
+    pointer-events: none;
+    mix-blend-mode: screen;
+    opacity: 0.06;
+    border: 1px dashed rgba(160,160,255,0.06);
+  }
+
+  /* Control bar (bottom) */
   .bottom-bar {
     position: fixed;
-    bottom: calc(env(safe-area-inset-bottom, 24px));
+    bottom: calc(env(safe-area-inset-bottom, 20px));
     left: 0;
     right: 0;
     display: flex;
     justify-content: center;
-    padding: 8px;
+    padding: 12px;
     pointer-events: none;
   }
 
   .bottom-inner {
     pointer-events: auto;
-    padding: 12px 18px;
+    padding: 10px 14px;
     border-radius: 999px;
     max-width: calc(100% - 32px);
     width: min(980px, calc(100% - 32px));
-
-    background: rgba(20, 30, 55, 0.22);
-    backdrop-filter: blur(14px);
-    border: 1px solid rgba(120, 150, 255, 0.14);
-
     display: flex;
     align-items: center;
     gap: 12px;
-    font-size: 0.92rem;
-    color: #d1d5db;
-
-    box-shadow: 0 6px 28px rgba(30, 60, 160, 0.12);
+    background: linear-gradient(180deg, rgba(12,16,30,0.58), rgba(10,12,20,0.48));
+    backdrop-filter: blur(10px) saturate(120%);
+    border: 1px solid rgba(120,150,255,0.08);
+    box-shadow: 0 8px 36px rgba(0,0,0,0.5);
+    color: #dbe7ff;
+    font-size: 14px;
   }
 
   .hint {
     flex: 1;
     min-width: 0;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
+    font-weight: 700;
+    letter-spacing: 0.02em;
     opacity: 0.95;
-    font-size: 0.95rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
-  /* BUTTON (larger on mobile for easy tapping) */
-  button {
+  /* Buttons */
+  .controls {
+    display:flex;
+    gap:8px;
+    align-items:center;
+  }
+
+  .btn {
     border: none;
-    padding: 10px 20px;
+    padding: 8px 14px;
     border-radius: 999px;
     font-weight: 800;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
     font-size: 0.9rem;
     cursor: pointer;
-
-    background: linear-gradient(135deg, #60a5fa, #2563eb);
-    color: #f8fafc;
-    box-shadow: 0 8px 30px rgba(37, 99, 235, 0.28);
-
-    transition: transform 0.14s ease, box-shadow 0.18s ease;
+    background: linear-gradient(135deg,#60a5fa,#2563eb);
+    color: #fff;
+    box-shadow: 0 8px 28px rgba(37,99,235,0.16);
   }
 
-  button:hover { transform: translateY(-1.6px); box-shadow: 0 12px 38px rgba(37, 99, 235, 0.4); }
-  button:active { transform: translateY(0) scale(0.99); box-shadow: 0 6px 18px rgba(37, 99, 235, 0.18); }
+  .btn.ghost {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.06);
+    color: #dbe7ff;
+    box-shadow: none;
+    padding: 8px 12px;
+    font-weight: 700;
+  }
 
-  /* Small devices adjustments */
+  .btn:active { transform: translateY(1px); }
+
+  /* Help modal (simple) */
+  .help {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%) scale(0.98);
+    width: min(760px, 92%);
+    max-width: 760px;
+    background: linear-gradient(180deg, rgba(6,8,15,0.96), rgba(6,8,15,0.94));
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 18px 50px rgba(2,6,23,0.8);
+    border: 1px solid rgba(120,150,255,0.06);
+    display: none;
+    z-index: 60;
+    pointer-events: auto;
+    color: #eaf0ff;
+  }
+
+  .help h3 { font-size: 1.15rem; margin-bottom: 8px; color: #fff; }
+  .help p { font-size: 0.98rem; line-height: 1.5; opacity: 0.95; }
+  .help .close { margin-top: 12px; display:flex; justify-content:flex-end; }
+
+  /* Celebration ring animation */
+  .celebrate {
+    position: fixed;
+    left: 50%;
+    top: 45%;
+    transform: translate(-50%,-50%);
+    pointer-events: none;
+    width: 340px;
+    height: 340px;
+    border-radius: 50%;
+    z-index: 40;
+    opacity: 0;
+    transition: opacity 260ms ease;
+    mix-blend-mode: screen;
+  }
+  .celebrate.show { opacity: 1; animation: pulse 800ms ease forwards; }
+  @keyframes pulse {
+    0% { transform: translate(-50%,-50%) scale(0.6); filter: blur(8px); opacity: 0.9; }
+    60% { transform: translate(-50%,-50%) scale(1.05); filter: blur(0px); opacity: 0.7; }
+    100% { transform: translate(-50%,-50%) scale(1); opacity: 0.0; }
+  }
+
+  /* small screen tweaks */
   @media (max-width: 720px) {
-    .top-heading span { font-size: 18px; letter-spacing: 0.08em; }
-    #scoreValue { font-size: clamp(2rem, 18vw, 5.2rem); }
-    .bottom-inner { padding: 10px 12px; gap: 8px; border-radius: 16px; }
-    .hint { display: none; } /* hide long hint to keep bar compact */
-    button { padding: 12px 18px; font-size: 1rem; }
+    .school .title { font-size: 13px; letter-spacing: 0.08em; }
+    .school .subtitle { font-size: 11px; }
+    #scoreValue { font-size: clamp(2rem, 18vw, 4.8rem); }
+    .hint { display: none; }
+    .bottom-inner { padding: 10px; gap: 8px; border-radius: 14px; }
+    .btn { padding: 10px 12px; font-size: 0.98rem; }
+    .center-ring { display: none; }
+    /* move byline-badge slightly higher on small screens to avoid overlap */
+    .byline-badge { bottom: calc(env(safe-area-inset-bottom, 16px) + 86px); left: 12px; }
   }
 
-  /* Extra small devices (very small phones) */
-  @media (max-width: 420px) {
-    .top-heading { top: env(safe-area-inset-top, 12px); }
-    .top-heading span { font-size: 14px; }
-    #scoreText { font-size: 0.95rem; }
-    .bottom-inner { width: calc(100% - 24px); padding: 10px; gap: 10px; border-radius: 12px; }
-    button { padding: 12px 16px; font-size: 0.98rem; }
-    .center-score { padding: 12px; }
-  }
-
-  /* Accessibility: focus styles */
-  button:focus { outline: 3px solid rgba(37,99,235,0.18); outline-offset: 3px; }
-
+  /* Focus outline for accessibility */
+  .btn:focus { outline: 3px solid rgba(96,165,250,0.14); outline-offset: 3px; }
 </style>
 </head>
 <body>
 
-  <canvas id="circleCanvas"></canvas>
+<canvas id="circleCanvas"></canvas>
 
-  <div class="top-heading"><span>perfect circle draw challeng by prasanna & vishal</span></div>
-
-  <div class="center-score">
-    <div id="scoreValue">0%</div>
-    <div id="scoreText">Draw a circle around the dot</div>
+<!-- Header -->
+<div class="header">
+  <div class="school">
+    <div class="title">Navbharat English Medium School</div>
+    <div class="subtitle">Perfect Circle Draw Challenge — Math Exhibition</div>
   </div>
+  <!-- header right left intentionally empty so top area stays balanced -->
+  <div style="width:48px;"></div>
+</div>
 
-  <div class="bottom-bar">
-    <div class="bottom-inner">
-      <span class="hint">💡 Tip: Keep your hand steady and complete a full circle.</span>
-      <button id="resetBtn" aria-label="Reset drawing">Reset</button>
+<!-- Byline badge moved down -->
+<div class="byline-badge" aria-hidden="true">
+  <div class="names">By Prasanna &amp; Vishal</div>
+</div>
+
+<!-- Center score -->
+<div class="center-score" aria-hidden="false">
+  <div id="scoreValue" aria-live="polite">0%</div>
+  <div id="scoreText">Draw a smooth circle around the dot</div>
+</div>
+
+<!-- Decorative center ring -->
+<div class="center-ring" aria-hidden="true"></div>
+
+<!-- bottom controls -->
+<div class="bottom-bar">
+  <div class="bottom-inner" role="region" aria-label="Controls">
+    <div class="hint">Try to complete the circle smoothly — higher coverage + consistent distance from the dot gives higher score.</div>
+
+    <div class="controls">
+      <button id="resetBtn" class="btn ghost" title="Reset drawing">Reset</button>
+      <button id="helpBtn" class="btn ghost" title="How to play">Help</button>
+      <button id="saveBtn" class="btn" title="Save your drawing as PNG">Save PNG</button>
     </div>
   </div>
+</div>
 
-  <script>
-    const canvas = document.getElementById("circleCanvas");
-    const ctx = canvas.getContext("2d");
-    const scoreValue = document.getElementById("scoreValue");
-    const scoreText = document.getElementById("scoreText");
-    const resetBtn = document.getElementById("resetBtn");
+<!-- Help modal -->
+<div id="helpModal" class="help" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+  <h3 id="helpTitle">How to play</h3>
+  <p>
+    Use your mouse (or finger on touch devices) to draw one continuous circle around the golden dot in the center.
+    The scoring considers how much of the circle you covered, how steady your distance from the center was, and whether the line closes well.
+    Try to draw one smooth stroke that makes ~360° around the dot.
+  </p>
+  <p>
+    High score tips: keep your hand steady, aim for a steady radius, and draw in one continuous motion. Practise a few times!
+  </p>
+  <div class="close">
+    <button id="closeHelp" class="btn ghost">Close</button>
+  </div>
+</div>
 
-    let width, height, cx, cy;
-    let drawing = false;
-    let points = [];
-    let lastScore = 0;
-    let hue = 0;
+<!-- celebration visual -->
+<svg id="celebrate" class="celebrate" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <defs>
+    <radialGradient id="g" cx="50%" cy="40%">
+      <stop offset="0%" stop-color="#fff" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="#60a5fa" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <circle cx="100" cy="100" r="90" fill="url(#g)"></circle>
+</svg>
 
-    // For live update throttling
-    let pendingLive = false;
-    let lastLiveScore = 0;
 
-    function resizeCanvas() {
-      width = window.innerWidth;
-      height = window.innerHeight;
-      const ratio = window.devicePixelRatio || 1;
-      canvas.width = Math.round(width * ratio);
-      canvas.height = Math.round(height * ratio);
-      canvas.style.width = width + "px";
-      canvas.style.height = height + "px";
-      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-      cx = width / 2;
-      cy = height / 2;
-      drawBackground();
+
+
+<script>
+  // Elements
+  const canvas = document.getElementById("circleCanvas");
+  const ctx = canvas.getContext("2d");
+  const scoreValue = document.getElementById("scoreValue");
+  const scoreText = document.getElementById("scoreText");
+  const resetBtn = document.getElementById("resetBtn");
+  const saveBtn = document.getElementById("saveBtn");
+  const helpBtn = document.getElementById("helpBtn");
+  const helpModal = document.getElementById("helpModal");
+  const closeHelp = document.getElementById("closeHelp");
+  const celebrate = document.getElementById("celebrate");
+
+  // State
+  let width, height, cx, cy;
+  let drawing = false;
+  let points = [];
+  let lastScore = 0;
+  let hue = 0;
+  let pendingLive = false;
+  let lastLiveScore = 0;
+
+  // Device pixel handling
+  function resizeCanvas() {
+    width = window.innerWidth;
+    height = window.innerHeight;
+    const ratio = Math.max(1, window.devicePixelRatio || 1);
+    canvas.width = Math.round(width * ratio);
+    canvas.height = Math.round(height * ratio);
+    canvas.style.width = width + "px";
+    canvas.style.height = height + "px";
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    cx = width / 2;
+    cy = height / 2;
+    drawBackground();
+  }
+
+  function drawBackground() {
+    ctx.clearRect(0,0,width,height);
+
+    // subtle vignette
+    const grad = ctx.createRadialGradient(cx, cy, Math.max(1, Math.min(width, height)*0.06), cx, cy, Math.max(width, height)*0.9);
+    grad.addColorStop(0, "#000000");
+    grad.addColorStop(1, "#000000");
+    ctx.fillStyle = grad;
+    ctx.fillRect(0,0,width,height);
+
+    // center golden dot
+    ctx.beginPath();
+    ctx.fillStyle = "#facc15";
+    ctx.arc(cx, cy, Math.max(3, Math.min(width, height)*0.006), 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  // init
+  resizeCanvas();
+  window.addEventListener("resize", resizeCanvas);
+
+  // pointer helpers
+  function getPos(e) {
+    const rect = canvas.getBoundingClientRect();
+    let clientX, clientY;
+    if (e.touches && e.touches[0]) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; }
+    else { clientX = e.clientX; clientY = e.clientY; }
+    return { x: clientX - rect.left, y: clientY - rect.top };
+  }
+
+  function startDraw(e) {
+    e.preventDefault();
+    drawing = true;
+    points = [];
+    hue = 0;
+    drawBackground();
+
+    const p = getPos(e);
+    points.push(p);
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
+
+    scoreText.textContent = "Drawing… live score shown";
+    lastLiveScore = 0;
+    pendingLive = false;
+  }
+
+  function moveDraw(e) {
+    if (!drawing) return;
+    e.preventDefault();
+    const p = getPos(e);
+    points.push(p);
+
+    // colorful trail
+    hue = (hue + 2) % 360;
+    ctx.strokeStyle = `hsl(${hue}, 100%, 55%)`;
+    ctx.lineWidth = Math.max(3, (Math.min(width, height)/160));
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+
+    // live scoring throttle
+    if (!pendingLive) {
+      pendingLive = true;
+      requestAnimationFrame(() => {
+        const live = computeScoreFromPoints(points);
+        lastLiveScore = Math.round(lastLiveScore + (live - lastLiveScore) * 0.35);
+        scoreValue.textContent = lastLiveScore + "%";
+        pendingLive = false;
+      });
     }
+  }
 
-    function drawBackground() {
-      ctx.clearRect(0, 0, width, height);
+  function endDraw(e) {
+    if (!drawing) return;
+    drawing = false;
+    ctx.closePath();
 
-      // subtle vignette on pure black background for depth
-      const grad = ctx.createRadialGradient(cx, cy, Math.max(1, Math.min(width, height) * 0.08), cx, cy, Math.max(width, height) * 0.9);
-      grad.addColorStop(0, "#000000");
-      grad.addColorStop(1, "#000000");
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, width, height);
-
-      // center target dot
-      ctx.beginPath();
-      ctx.fillStyle = "#facc15";
-      ctx.arc(cx, cy, Math.max(3, Math.min(width, height) * 0.006), 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    // initialize
-    resizeCanvas();
-    window.addEventListener("resize", resizeCanvas);
-
-    function getPos(e) {
-      const rect = canvas.getBoundingClientRect();
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-      return { x: clientX - rect.left, y: clientY - rect.top };
-    }
-
-    function startDraw(e) {
-      e.preventDefault();
-      drawing = true;
-      points = [];
-      hue = 0;
-      drawBackground();
-      const p = getPos(e);
-      points.push(p);
-      ctx.beginPath();
-      ctx.moveTo(p.x, p.y);
-      scoreText.textContent = "Drawing… live score shown";
-      lastLiveScore = 0;
-      pendingLive = false;
-    }
-
-    function moveDraw(e) {
-      if (!drawing) return;
-      e.preventDefault();
-      const p = getPos(e);
-      points.push(p);
-
-      hue = (hue + 2) % 360;
-      ctx.strokeStyle = `hsl(${hue}, 100%, 60%)`;
-      ctx.lineWidth = Math.max(3, (Math.min(width, height) / 160)); // adaptive thickness
-      ctx.lineCap = "round";
-      ctx.lineJoin = "round";
-      ctx.lineTo(p.x, p.y);
-      ctx.stroke();
-
-      if (!pendingLive) {
-        pendingLive = true;
-        requestAnimationFrame(() => {
-          const live = computeScoreFromPoints(points);
-          lastLiveScore = Math.round(lastLiveScore + (live - lastLiveScore) * 0.35);
-          scoreValue.textContent = lastLiveScore + "%";
-          pendingLive = false;
-        });
-      }
-    }
-
-    function endDraw(e) {
-      if (!drawing) return;
-      drawing = false;
-      ctx.closePath();
-
-      if (points.length < 30) {
-        animateScore(0);
-        scoreText.textContent = "Draw a bigger, smoother circle!";
-        return;
-      }
-
-      evaluateCircle();
-    }
-
-    // smoothing
-    function smoothPoints(points, window = 3) {
-      if (points.length <= window) return points.slice();
-      const out = [];
-      for (let i = 0; i < points.length; i++) {
-        let sumX = 0, sumY = 0, count = 0;
-        for (let j = i - Math.floor(window/2); j <= i + Math.floor(window/2); j++) {
-          if (j >= 0 && j < points.length) { sumX += points[j].x; sumY += points[j].y; count++; }
-        }
-        out.push({ x: sumX / count, y: sumY / count });
-      }
-      return out;
-    }
-
-    // scoring function (same as before)
-    function computeScoreFromPoints(rawPoints) {
-      if (!rawPoints || rawPoints.length < 6) return 0;
-      const sPoints = smoothPoints(rawPoints, 3);
-
-      const radii = sPoints.map(p => Math.hypot(p.x - cx, p.y - cy));
-      const avgR = radii.reduce((a,b) => a+b, 0) / radii.length;
-      const variance = radii.map(r => (r - avgR) ** 2).reduce((a,b) => a+b, 0) / radii.length;
-      const std = Math.sqrt(Math.max(0, variance));
-
-      const start = sPoints[0];
-      const end = sPoints[sPoints.length - 1];
-      const closure = Math.hypot(start.x - end.x, start.y - end.y);
-
-      const wiggle = std / (avgR || 1);
-      const closureRatio = closure / (avgR || 1);
-
-      const angles = sPoints.map(p => {
-        let a = Math.atan2(p.y - cy, p.x - cx) * 180 / Math.PI;
-        if (a < 0) a += 360;
-        return a;
-      }).sort((a,b) => a-b);
-
-      let maxGap = 0;
-      for (let i = 1; i < angles.length; i++) maxGap = Math.max(maxGap, angles[i] - angles[i-1]);
-      const wrapGap = (angles[0] + 360) - angles[angles.length - 1];
-      maxGap = Math.max(maxGap, wrapGap);
-      const coverage = Math.max(0, 1 - (maxGap / 360));
-
-      const wigglePenalty = Math.tanh(wiggle * 2);
-      const closurePenalty = Math.tanh(closureRatio * 2);
-
-      const coverageWeight = 0.50;
-      const wiggleWeight = 0.35;
-      const closureWeight = 0.15;
-
-      let rawScore =
-        coverage * coverageWeight +
-        (1 - wigglePenalty) * wiggleWeight +
-        (1 - closurePenalty) * closureWeight;
-
-      if (coverage < 0.60) {
-        const factor = coverage / 0.60;
-        rawScore = rawScore * factor * factor;
-      }
-
-      let score = Math.round(100 * rawScore);
-      score = Math.max(0, Math.min(100, score));
-      return score;
-    }
-
-    function evaluateCircle() {
-      const finalScore = computeScoreFromPoints(points);
-      animateScore(finalScore);
-
-      if (finalScore >= 95) scoreText.textContent = "Perfect circle! 🔥";
-      else if (finalScore >= 80) scoreText.textContent = "Amazing — great circle!";
-      else if (finalScore >= 60) scoreText.textContent = "Nice! A little wobble.";
-      else if (finalScore >= 35) scoreText.textContent = "Not bad — keep practicing.";
-      else scoreText.textContent = "Keep practicing 🙂";
-    }
-
-    function animateScore(target) {
-      const start = lastScore;
-      const end = Math.round(target);
-      const startTime = performance.now();
-      const duration = 600;
-      function frame(now) {
-        const t = Math.min(1, (now - startTime) / duration);
-        const eased = 1 - Math.pow(1 - t, 3);
-        const val = Math.round(start + (end - start) * eased);
-        scoreValue.textContent = val + "%";
-        if (t < 1) requestAnimationFrame(frame);
-        else {
-          lastScore = end;
-          lastLiveScore = end;
-        }
-      }
-      requestAnimationFrame(frame);
-    }
-
-    // events (mouse + touch)
-    canvas.addEventListener("mousedown", startDraw);
-    canvas.addEventListener("mousemove", moveDraw);
-    canvas.addEventListener("mouseup", endDraw);
-    canvas.addEventListener("mouseleave", endDraw);
-
-    canvas.addEventListener("touchstart", startDraw, { passive: false });
-    canvas.addEventListener("touchmove", moveDraw, { passive: false });
-    canvas.addEventListener("touchend", endDraw, { passive: false });
-    canvas.addEventListener("touchcancel", endDraw, { passive: false });
-
-    // Reset
-    resetBtn.addEventListener("click", () => {
-      points = [];
-      drawBackground();
+    if (points.length < 30) {
       animateScore(0);
-      scoreText.textContent = "Draw a circle around the dot";
-    });
+      scoreText.textContent = "Draw a bigger, smoother circle!";
+      return;
+    }
 
-  </script>
+    evaluateCircle();
+  }
+
+  // smoothing helper
+  function smoothPoints(points, window = 3) {
+    if (points.length <= window) return points.slice();
+    const out = [];
+    for (let i = 0; i < points.length; i++) {
+      let sumX = 0, sumY = 0, count = 0;
+      for (let j = i - Math.floor(window/2); j <= i + Math.floor(window/2); j++) {
+        if (j >= 0 && j < points.length) { sumX += points[j].x; sumY += points[j].y; count++; }
+      }
+      out.push({ x: sumX / count, y: sumY / count });
+    }
+    return out;
+  }
+
+  // scoring (kept from your version)
+  function computeScoreFromPoints(rawPoints) {
+    if (!rawPoints || rawPoints.length < 6) return 0;
+    const sPoints = smoothPoints(rawPoints, 3);
+
+    const radii = sPoints.map(p => Math.hypot(p.x - cx, p.y - cy));
+    const avgR = radii.reduce((a,b)=>a+b,0) / radii.length;
+    const variance = radii.map(r => (r - avgR) ** 2).reduce((a,b)=>a+b,0) / radii.length;
+    const std = Math.sqrt(Math.max(0, variance));
+
+    const start = sPoints[0];
+    const end = sPoints[sPoints.length - 1];
+    const closure = Math.hypot(start.x - end.x, start.y - end.y);
+
+    const wiggle = std / (avgR || 1);
+    const closureRatio = closure / (avgR || 1);
+
+    const angles = sPoints.map(p => {
+      let a = Math.atan2(p.y - cy, p.x - cx) * 180 / Math.PI;
+      if (a < 0) a += 360;
+      return a;
+    }).sort((a,b)=>a-b);
+
+    let maxGap = 0;
+    for (let i = 1; i < angles.length; i++) maxGap = Math.max(maxGap, angles[i] - angles[i-1]);
+    const wrapGap = (angles[0] + 360) - angles[angles.length - 1];
+    maxGap = Math.max(maxGap, wrapGap);
+    const coverage = Math.max(0, 1 - (maxGap / 360));
+
+    const wigglePenalty = Math.tanh(wiggle * 2);
+    const closurePenalty = Math.tanh(closureRatio * 2);
+
+    const coverageWeight = 0.50;
+    const wiggleWeight = 0.35;
+    const closureWeight = 0.15;
+
+    let rawScore =
+      coverage * coverageWeight +
+      (1 - wigglePenalty) * wiggleWeight +
+      (1 - closurePenalty) * closureWeight;
+
+    if (coverage < 0.60) {
+      const factor = coverage / 0.60;
+      rawScore = rawScore * factor * factor;
+    }
+
+    let score = Math.round(100 * rawScore);
+    score = Math.max(0, Math.min(100, score));
+    return score;
+  }
+
+  function evaluateCircle() {
+    const finalScore = computeScoreFromPoints(points);
+    animateScore(finalScore);
+
+    if (finalScore >= 95) {
+      scoreText.textContent = "Perfect circle! 🔥";
+      showCelebrate();
+    } else if (finalScore >= 80) scoreText.textContent = "Amazing — great circle!";
+    else if (finalScore >= 60) scoreText.textContent = "Nice! A little wobble.";
+    else if (finalScore >= 35) scoreText.textContent = "Not bad — keep practicing.";
+    else scoreText.textContent = "Keep practicing 🙂";
+  }
+
+  function animateScore(target) {
+    const start = lastScore;
+    const end = Math.round(target);
+    const startTime = performance.now();
+    const duration = 600;
+    function frame(now) {
+      const t = Math.min(1, (now - startTime) / duration);
+      const eased = 1 - Math.pow(1 - t, 3);
+      const val = Math.round(start + (end - start) * eased);
+      scoreValue.textContent = val + "%";
+      if (t < 1) requestAnimationFrame(frame);
+      else { lastScore = end; lastLiveScore = end; }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  // celebration display
+  function showCelebrate() {
+    celebrate.classList.add('show');
+    setTimeout(() => celebrate.classList.remove('show'), 1100);
+  }
+
+  // events (mouse + touch)
+  canvas.addEventListener("mousedown", startDraw);
+  canvas.addEventListener("mousemove", moveDraw);
+  canvas.addEventListener("mouseup", endDraw);
+  canvas.addEventListener("mouseleave", endDraw);
+
+  canvas.addEventListener("touchstart", startDraw, { passive: false });
+  canvas.addEventListener("touchmove", moveDraw, { passive: false });
+  canvas.addEventListener("touchend", endDraw, { passive: false });
+  canvas.addEventListener("touchcancel", endDraw, { passive: false });
+
+  // Reset button
+  resetBtn.addEventListener("click", () => {
+    points = [];
+    drawBackground();
+    animateScore(0);
+    scoreText.textContent = "Draw a circle around the dot";
+  });
+
+  // Save PNG
+  saveBtn.addEventListener("click", () => {
+    // create a temporary canvas copy because our canvas is retina-scaled via transform
+    const ratio = Math.max(1, window.devicePixelRatio || 1);
+    const temp = document.createElement('canvas');
+    temp.width = canvas.width;
+    temp.height = canvas.height;
+    const tctx = temp.getContext('2d');
+    // copy drawn content (use drawImage - canvas is already scaled)
+    tctx.drawImage(canvas, 0, 0);
+    // download
+    temp.toBlob(blob => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'perfect-circle.png';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }, 'image/png');
+  });
+
+  // Help modal toggles
+  helpBtn.addEventListener("click", () => { helpModal.style.display = "block"; helpModal.focus(); });
+  closeHelp.addEventListener("click", () => { helpModal.style.display = "none"; });
+
+  // keyboard shortcuts (accessibility)
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") helpModal.style.display = "none";
+    if (e.key.toLowerCase() === "r") resetBtn.click();
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") { e.preventDefault(); saveBtn.click(); }
+  });
+
+  // prevent double-tap zoom on iOS while interacting with canvas
+  document.addEventListener('touchstart', function() {}, {passive: true});
+
+  // initial draw
+  drawBackground();
+</script>
 </body>
 </html>
